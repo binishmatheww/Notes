@@ -1,0 +1,167 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlinx-serialization'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+
+    compileSdk 32
+
+    flavorDimensions "versionCode"
+
+    // 1 or more digits
+    def versionMajor = 0
+    // exactly 1 digit
+    def versionMinor = 0
+    // exactly 2 digits
+    def versionBuild = 01
+
+    defaultConfig {
+
+        applicationId "com.binishmatheww.notes"
+
+        minSdk 21
+
+        targetSdk 32
+
+        versionCode versionMajor * 1000 + versionMinor * 100 + versionBuild
+
+        versionName "${versionMajor}.${versionMinor}.${versionBuild}"
+
+        multiDexEnabled true
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    productFlavors {
+
+        stable {
+            buildConfigField 'boolean', 'SHOULD_PRINT_LOGS', "false"
+            versionName "${versionMajor}.${versionMinor}.${versionBuild}"
+        }
+
+        alpha {
+            buildConfigField 'boolean', 'SHOULD_PRINT_LOGS', "true"
+            versionName "${versionMajor}.${versionMinor}.${versionBuild}-alpha"
+        }
+
+        beta {
+            buildConfigField 'boolean', 'SHOULD_PRINT_LOGS', "true"
+            versionName "${versionMajor}.${versionMinor}.${versionBuild}-beta"
+        }
+
+    }
+
+    applicationVariants.all { variant ->
+
+        variant.outputs.all { output ->
+
+            def project = "The notes"
+            def version = "v"+versionMajor+"."+versionMinor+"."+versionBuild
+            //def formattedDate = new Date().format('YYYY_MM_dd_hh_mm_ss_aa')
+            def apkName = "${project}_${version}.apk"
+
+            outputFileName = new File(apkName)
+
+        }
+
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion "1.1.0-beta04"
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    buildFeatures {
+        compose true
+    }
+    namespace 'com.binishmatheww.notes'
+
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.5.30"
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.5.0'
+
+    // Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
+
+    //ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
+
+    //Activity ktx
+    implementation "androidx.activity:activity-ktx:1.4.0"
+
+    //Fragment ktx
+    implementation "androidx.fragment:fragment-ktx:1.4.1"
+
+    //Jetpack compose
+    implementation 'androidx.compose.ui:ui:1.2.0-alpha04'
+    implementation 'androidx.compose.ui:ui-tooling:1.2.0-alpha04'
+    implementation 'androidx.compose.foundation:foundation:1.2.0-alpha04'
+    implementation 'androidx.compose.material:material:1.2.0-alpha04'
+    implementation 'androidx.compose.material3:material3:1.0.0-alpha06'
+    implementation 'androidx.compose.material:material-icons-core:1.2.0-alpha04'
+    implementation 'androidx.compose.material:material-icons-extended:1.2.0-alpha04'
+    implementation 'androidx.activity:activity-compose:1.4.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1'
+
+    // Accompanist systemUiController
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.17.0"
+
+    //Room
+    implementation "androidx.room:room-runtime:2.4.1"
+    implementation "androidx.room:room-ktx:2.4.1"
+    kapt "androidx.room:room-compiler:2.4.1"
+
+    //Dagger hilt
+    implementation 'com.google.dagger:hilt-android:2.38.1'
+    implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03'
+    kapt 'com.google.dagger:hilt-android-compiler:2.38.1'
+    kapt 'androidx.hilt:hilt-compiler:1.0.0'
+
+    //Paging 3
+    implementation "androidx.paging:paging-runtime:3.1.1"
+    implementation "androidx.paging:paging-compose:1.0.0-alpha14"
+    implementation "androidx.room:room-paging:2.4.2"
+
+    //Work manager
+    //implementation "androidx.work:work-runtime-ktx:2.7.1"
+    //implementation "androidx.work:work-multiprocess:2.7.1"
+
+    //Glide
+    //implementation 'com.github.bumptech.glide:glide:4.12.0'
+    //kapt 'com.github.bumptech.glide:compiler:4.12.0'
+
+    //Ktor client
+    //implementation 'io.ktor:ktor-client-android:1.5.0'
+    //implementation 'io.ktor:ktor-client-serialization:1.5.0'
+    //implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1'
+    //implementation 'io.ktor:ktor-client-logging-jvm:1.5.0'
+    //implementation 'io.ktor:ktor-client-cio:1.5.0'
+    //implementation 'io.ktor:ktor-client-gson:1.5.0'
+
+
+}
