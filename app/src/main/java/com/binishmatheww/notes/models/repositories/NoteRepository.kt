@@ -2,7 +2,6 @@ package com.binishmatheww.notes.models.repositories
 
 import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.models.databases.NoteDatabase
-import com.binishmatheww.notes.models.pager.PagedNotes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -13,38 +12,6 @@ class NoteRepository @Inject constructor( private val noteDatabase : NoteDatabas
     fun getNotesByQuery( searchQuery : String ) : Flow<List<Note>> {
 
         return noteDatabase.notes().getNotesByQuery("%${searchQuery}%")
-
-    }
-
-    fun getNotesByQueryAfterId( searchQuery : String, startingIndex : Long?, limit : Int ) : PagedNotes {
-
-        noteDatabase.notes().getNotesByQueryAfterId( start = startingIndex ?: 0L, limit = limit ).let {
-
-            return if( it.isEmpty() ){
-                PagedNotes(previousId = startingIndex, emptyList(),null)
-            }
-            else{
-
-                PagedNotes(previousId = startingIndex,it,it.last().id)
-            }
-
-        }
-
-    }
-
-    fun getNotesByQueryBeforeId( searchQuery : String, endingIndex : Long?, limit : Int ) : PagedNotes {
-
-        noteDatabase.notes().getNotesByQueryBeforeId( start = endingIndex ?: 0L, limit = limit ).let {
-
-            return if( it.isEmpty() ){
-                PagedNotes(previousId = null, emptyList(),endingIndex)
-            }
-            else{
-
-                PagedNotes(previousId = it.first().id,it,endingIndex)
-            }
-
-        }
 
     }
 

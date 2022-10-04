@@ -8,9 +8,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.binishmatheww.notes.core.Theme
-import com.binishmatheww.notes.core.utilities.observeAsSate
 import com.binishmatheww.notes.viewModels.HomeViewModel
-import com.binishmatheww.notes.views.composables.*
+import com.binishmatheww.notes.views.screens.HomeScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,12 +26,9 @@ class HomeFragment : Fragment() {
         return ComposeView(inflater.context).apply {
             setContent {
 
-                val lifeCycleState = lifecycle.observeAsSate().value
-
                 Theme.NotesTheme {
 
-                    Home(
-                        lifeCycleState = lifeCycleState,
+                    HomeScreen(
                         homeViewModel = homeViewModel
                     )
 

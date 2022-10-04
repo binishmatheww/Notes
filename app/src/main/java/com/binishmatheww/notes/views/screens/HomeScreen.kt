@@ -1,4 +1,4 @@
-package com.binishmatheww.notes.views.composables
+package com.binishmatheww.notes.views.screens
 
 import android.view.animation.OvershootInterpolator
 import android.widget.Toast
@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -38,26 +39,31 @@ import com.binishmatheww.notes.core.utilities.noRippleClickable
 import com.binishmatheww.notes.core.utilities.observeAsSate
 import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.viewModels.HomeViewModel
+import com.binishmatheww.notes.views.composables.AddNoteDialog
+import com.binishmatheww.notes.views.composables.ImageButton
+import com.binishmatheww.notes.views.composables.TextInputField
 import kotlin.math.roundToInt
 
-
 @Composable
-fun Home(
-    lifeCycleState : Lifecycle.Event,
+fun HomeScreen(
     homeViewModel : HomeViewModel
 ) {
 
     val context = LocalContext.current.applicationContext
 
+    val lifeCycleState = LocalLifecycleOwner.current.lifecycle.observeAsSate().value
+
     val openAddNoteDialog = remember { mutableStateOf(false) }
 
 
-    if (lifeCycleState == Lifecycle.Event.ON_PAUSE) {
+    if ( lifeCycleState == Lifecycle.Event.ON_PAUSE ) {
         openAddNoteDialog.value = false
     }
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Theme.ColorPalette.primaryColor)
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -184,7 +190,9 @@ fun DisplayNotes(
 
     val width = LocalConfiguration.current.screenWidthDp
 
-    LaunchedEffect(key1 = true, block = {
+    LaunchedEffect(
+        key1 = true,
+        block = {
 
         starting.animateTo(
             1f,
@@ -198,9 +206,9 @@ fun DisplayNotes(
 
     })
 
-    val notes = homeViewModel.getNotesByQuery().collectAsState(initial = arrayListOf())
+    val notes by homeViewModel.getNotesByQuery().collectAsState(initial = arrayListOf())
 
-    if(notes.value.isEmpty()){
+    if(notes.isEmpty()){
 
         Box(
             modifier = Modifier
@@ -265,7 +273,7 @@ fun DisplayNotes(
             contentPadding = PaddingValues(16.dp)
         ) {
 
-            items(notes.value){ note ->
+            items(notes){ note ->
 
                 var offsetX by remember { mutableStateOf(0f) }
 
@@ -349,216 +357,5 @@ fun DisplayNotes(
         }
 
     }
-
-
-    /*when {
-
-        homeViewModel.pager.isLoading.value -> {
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Theme.ColorPalette.primaryColor)
-                    .alpha(starting.value),
-                contentAlignment = Alignment.Center
-            ) {
-
-                CircularProgressIndicator(
-                    modifier = Modifier.size(50.dp),
-                    color = Theme.ColorPalette.secondaryColor
-                )
-
-            }
-
-        }
-
-        homeViewModel.pager.notes.isEmpty() -> {
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Theme.ColorPalette.primaryColor)
-                    .alpha(starting.value),
-                contentAlignment = Alignment.Center
-            ) {
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Theme.ColorPalette.primaryColor)
-                        .align(Alignment.Center)
-                        .noRippleClickable(addNote),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-
-                    Image(
-                        modifier = Modifier
-                            .size(75.dp)
-                            .alpha(0.5F),
-                        painter = painterResource(id = R.drawable.note),
-                        contentDescription = "Logo",
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Text(
-                        text = if (homeViewModel.searchQuery.isBlank()) "Nothing here..." else "Nothing matches your query...",
-                        textAlign = TextAlign.Center,
-                        style = TextStyle(
-                            color = Theme.ColorPalette.primaryColor.copy(0.4F),
-                            fontSize = 16.sp
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    if (homeViewModel.searchQuery.isBlank()){
-                        Text(
-                            text = "Add some notes and they will appear here",
-                            textAlign = TextAlign.Center,
-                            style = TextStyle(
-                                color = Theme.ColorPalette.primaryColor.copy(0.2F),
-                                fontSize = 20.sp
-                            )
-                        )
-                    }
-
-                }
-
-            }
-
-        }
-
-        else -> {
-
-            val lazyColumnState = rememberLazyListState()
-
-            val isScrolledToTheTop by remember { derivedStateOf { lazyColumnState.isScrolledToTheTop() } }
-
-            val isScrolledToTheEnd by remember { derivedStateOf { lazyColumnState.isScrolledToTheEnd() } }
-
-            var anchor by remember { mutableStateOf<Long?>(null) }
-
-
-            if( lazyColumnState.isScrollInProgress ){
-
-                LaunchedEffect( isScrolledToTheEnd ){
-
-                    if( homeViewModel.pager.nextId.value != null && homeViewModel.pager.nextId.value != anchor ){
-                        log { "nextId : ${homeViewModel.pager.nextId.value}" }
-                        anchor = homeViewModel.pager.nextId.value
-                        homeViewModel.loadNext()
-                    }
-
-                }
-
-                LaunchedEffect( isScrolledToTheTop ){
-
-                    if( homeViewModel.pager.previousId.value != null && homeViewModel.pager.previousId.value != anchor ){
-                        log { "previousId : ${homeViewModel.pager.previousId.value}" }
-                        anchor = homeViewModel.pager.previousId.value
-                        //homeViewModel.loadPrevious()
-                    }
-
-                }
-
-            }
-
-            LazyColumn(
-                state = lazyColumnState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Theme.ColorPalette.primaryColor),
-                contentPadding = PaddingValues(16.dp)
-            ) {
-
-                items(homeViewModel.pager.notes){ note ->
-
-                    var offsetX by remember { mutableStateOf(0f) }
-
-                    Card(
-                        elevation = 2.dp,
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(2.dp)
-                            .offset { IntOffset(offsetX.roundToInt(), 0) }
-                            .draggable(
-                                orientation = Orientation.Horizontal,
-                                state = rememberDraggableState { delta ->
-
-                                    offsetX += delta
-
-                                },
-                                onDragStopped = {
-
-                                    offsetX = if (offsetX > (width / 1.2)) {
-
-                                        //onNoteDeleted.invoke(note.id)
-                                        0f
-
-                                    } else {
-
-                                        0f
-
-                                    }
-
-                                }
-                            )
-                    ) {
-
-                        Box(
-                            modifier = Modifier
-                                .background(Theme.ColorPalette.getColorByNumber(note.colorId).copy(alpha = 0.6f))
-                                .clickable {
-                                    onNoteClicked.invoke(note.id)
-                                }
-                        ) {
-
-
-                            Column(modifier = Modifier
-                                .align(Alignment.TopCenter)
-                                .padding(start = 20.dp, top = 20.dp, bottom = 20.dp, end = 30.dp)) {
-
-                                Text(
-                                    text = note.title,
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    style = TextStyle(
-                                        color = Theme.ColorPalette.primaryColor,
-                                        textAlign = TextAlign.Center
-                                    ),
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-
-                                Spacer(modifier = Modifier.height(20.dp))
-
-                                Text(
-                                    text = note.description,
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    style = TextStyle(
-                                        color = Theme.ColorPalette.primaryColor,
-                                        textAlign = TextAlign.Center
-                                    ),
-                                    fontSize = 14.sp
-                                )
-
-                            }
-
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    }*/
-
 
 }
