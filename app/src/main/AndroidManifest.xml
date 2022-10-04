@@ -18,6 +18,7 @@
             android:icon="@drawable/note"
             android:roundIcon="@drawable/note"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode = "adjustResize"
             android:exported="true"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>

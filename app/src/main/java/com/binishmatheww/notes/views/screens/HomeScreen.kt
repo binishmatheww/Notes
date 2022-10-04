@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import com.binishmatheww.notes.R
 import com.binishmatheww.notes.core.Theme
@@ -46,7 +47,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(
-    homeViewModel : HomeViewModel
+    homeViewModel : HomeViewModel = hiltViewModel()
 ) {
 
     val context = LocalContext.current.applicationContext
