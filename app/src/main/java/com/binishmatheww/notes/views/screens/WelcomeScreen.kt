@@ -18,11 +18,11 @@ import com.binishmatheww.notes.core.Theme
 @Composable
 fun WelcomeScreen( onComplete : () -> Unit ) {
 
-    val angle = remember { Animatable(90f) }
+    val size = remember { Animatable(1f) }
 
     LaunchedEffect(true){
-        angle.animateTo(
-            -5f,
+        size.animateTo(
+            2f,
             animationSpec = tween(
                 durationMillis = 2000
             )
@@ -42,7 +42,8 @@ fun WelcomeScreen( onComplete : () -> Unit ) {
                 .wrapContentHeight()
                 .wrapContentWidth()
                 .graphicsLayer {
-                    rotationX = angle.value
+                    scaleX = size.value
+                    scaleY = size.value
                 },
             style = Theme.Typography.bold24
         )
