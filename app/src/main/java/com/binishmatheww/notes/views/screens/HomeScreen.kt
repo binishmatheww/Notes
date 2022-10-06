@@ -6,30 +6,23 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,12 +31,12 @@ import com.binishmatheww.notes.R
 import com.binishmatheww.notes.core.Theme
 import com.binishmatheww.notes.core.utilities.noRippleClickable
 import com.binishmatheww.notes.core.utilities.observeAsSate
+import com.binishmatheww.notes.core.utilities.onSwipe
 import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.viewModels.HomeViewModel
 import com.binishmatheww.notes.views.composables.AddNoteDialog
 import com.binishmatheww.notes.views.composables.ImageButton
 import com.binishmatheww.notes.views.composables.TextInputField
-import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(
@@ -69,6 +62,25 @@ fun HomeScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Theme.ColorPalette.primaryColor)
+                    .requiredHeight(100.dp)
+                    .padding(15.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Text(text = LocalContext.current.getString(R.string.spaced_app_name),
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .wrapContentWidth(),
+                    style = Theme.Typography.bold34
+                )
+
+            }
 
             Row(
                 modifier = Modifier
@@ -189,8 +201,6 @@ fun DisplayNotes(
 
     val starting = remember { Animatable(0f) }
 
-    val width = LocalConfiguration.current.screenWidthDp
-
     LaunchedEffect(
         key1 = true,
         block = {
@@ -276,38 +286,22 @@ fun DisplayNotes(
 
             items(notes){ note ->
 
-                var offsetX by remember { mutableStateOf(0f) }
-
                 Card(
                     elevation = 2.dp,
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(2.dp)
-                        .offset { IntOffset(offsetX.roundToInt(), 0) }
-                        .draggable(
-                            orientation = Orientation.Horizontal,
-                            state = rememberDraggableState { delta ->
-
-                                offsetX += delta
-
+                        .onSwipe(
+                            onSwipeLeft = {
+                                false
                             },
-                            onDragStopped = {
-
-                                offsetX = if (offsetX > (width / 1.2)) {
-
-                                    onNoteDeleted.invoke(note.id)
-                                    0f
-
-                                } else {
-
-                                    0f
-
-                                }
-
+                            onSwipeRight = {
+                                onNoteDeleted.invoke(note.id)
+                                true
                             }
                         )
-                ) {
+                ){
 
                     Box(
                         modifier = Modifier
@@ -316,9 +310,7 @@ fun DisplayNotes(
                                     .getColorByNumber(note.colorId)
                                     .copy(alpha = 0.6f)
                             )
-                            .clickable {
-                                onNoteClicked.invoke(note.id)
-                            }
+                            .padding(horizontal = 16.dp)
                     ) {
 
 

@@ -3,12 +3,12 @@ package com.binishmatheww.notes.core.utilities
 import android.graphics.Paint
 import android.util.Log
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.calculateTargetValue
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,16 +25,24 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.input.pointer.consumePositionChange
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.input.pointer.util.VelocityTracker
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 
 fun log(lambda: () -> String) = log("Notes", lambda)
 
@@ -63,20 +71,100 @@ fun Lifecycle.observeAsSate(): State<Lifecycle.Event> {
     return state
 }
 
-inline fun Modifier.swipeToDelete(
-    crossinline onDelete: (Float) -> Unit
-) : Modifier = composed {
+//https://github.com/Ahmed-Sellami/List-Animations-In-Compose/blob/swipe-to-delete/app/src/main/java/com/example/listanimationsincompose/ui/SwipeToDelete.kt
+fun Modifier.onSwipe(
+    onSwipeRight: () -> Boolean,
+    onSwipeLeft: () -> Boolean
+): Modifier = composed {
 
-    var offsetX by remember { mutableStateOf(0f) }
+    val offsetX = remember { Animatable(0f) }
 
-    offset { IntOffset(offsetX.roundToInt(), 0) }
+    val maximumWidth = with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.toPx() } * 0.5f
 
-    draggable(
-        orientation = Orientation.Horizontal,
-        state = rememberDraggableState { delta ->
-            offsetX += delta
+    pointerInput(Unit) {
+        // Used to calculate a settling position of a fling animation.
+        val decay = splineBasedDecay<Float>(this)
+        // Wrap in a coroutine scope to use suspend functions for touch events and animation.
+        coroutineScope {
+            while (true) {
+                // Wait for a touch down event.
+                val pointerId = awaitPointerEventScope { awaitFirstDown().id }
+                // Interrupt any ongoing animation of other items.
+                offsetX.stop()
+                // Prepare for drag events and record velocity of a fling.
+                val velocityTracker = VelocityTracker()
+                // Wait for drag events.
+                awaitPointerEventScope {
+                    horizontalDrag(pointerId) { change ->
+
+                        val horizontalDragOffset = offsetX.value + change.positionChange().x
+                        launch {
+                            offsetX.snapTo(horizontalDragOffset)
+                        }
+                        // Record the velocity of the drag.
+                        velocityTracker.addPosition(change.uptimeMillis, change.position)
+                        // Consume the gesture event, not passed to external
+                        change.consumePositionChange()
+
+                    }
+                }
+                // Dragging finished. Calculate the velocity of the fling.
+                var velocity = velocityTracker.calculateVelocity().x
+                // Calculate the eventual position where the fling should settle
+                // based on the current offset value and velocity
+                val targetOffsetX = decay.calculateTargetValue(offsetX.value, velocity)
+                // Set the upper and lower bounds so that the animation stops when it
+                // reaches the edge.
+                offsetX.updateBounds(
+                    lowerBound = (-size.width.toFloat()),
+                    upperBound = size.width.toFloat()
+                )
+                launch {
+
+                    //  Slide back the element if the settling position does not go beyond
+                    //  the size of the element. Remove the element if it does.
+                    if (targetOffsetX.absoluteValue <= maximumWidth) {
+                        // Not enough velocity; Slide back.
+                        offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
+                    }
+                    else {
+                        // Enough velocity to slide away the element to the edge.
+                        offsetX.animateDecay(
+                            // If the velocity is low, we create a fake velocity to make the animation look smoother
+                            when (velocity) {
+                                in 0f..500f -> {
+                                    3000f
+                                }
+                                in -500f..0f -> {
+                                    -3000f
+                                }
+                                else -> {
+                                    velocity
+                                }
+                            },
+                            decay
+                        )
+                        // The element was swiped away.
+                        if(velocity >= 0){
+                            if(!onSwipeRight.invoke()){
+                                offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
+                            }
+                        }
+                        else{
+                            if (!onSwipeLeft.invoke()){
+                                offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
+                            }
+                        }
+                    }
+
+                }
+            }
         }
-    )
+    }
+        .offset {
+            // Use the animating offset value here.
+            IntOffset(offsetX.value.toInt(), 0)
+        }
 
 }
 
