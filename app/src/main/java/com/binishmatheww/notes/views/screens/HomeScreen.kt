@@ -6,10 +6,12 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
@@ -43,30 +45,29 @@ fun HomeScreen(
     homeViewModel : HomeViewModel = hiltViewModel()
 ) {
 
-    val context = LocalContext.current.applicationContext
+    Theme.NotesTheme {
 
-    val lifeCycleState = LocalLifecycleOwner.current.lifecycle.observeAsSate().value
+        val context = LocalContext.current.applicationContext
 
-    val openAddNoteDialog = remember { mutableStateOf(false) }
+        val lifeCycleState = LocalLifecycleOwner.current.lifecycle.observeAsSate().value
+
+        val openAddNoteDialog = remember { mutableStateOf(false) }
 
 
-    if ( lifeCycleState == Lifecycle.Event.ON_PAUSE ) {
-        openAddNoteDialog.value = false
-    }
+        if ( lifeCycleState == Lifecycle.Event.ON_PAUSE ) {
+            openAddNoteDialog.value = false
+        }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Theme.ColorPalette.primaryColor)
-    ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
         ) {
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Theme.ColorPalette.primaryColor)
+                    .background(MaterialTheme.colorScheme.background)
                     .requiredHeight(100.dp)
                     .padding(15.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -77,7 +78,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .wrapContentHeight()
                         .wrapContentWidth(),
-                    style = Theme.Typography.bold34
+                    style = MaterialTheme.typography.headlineLarge.copy(color = MaterialTheme.colorScheme.primary)
                 )
 
             }
@@ -104,7 +105,7 @@ fun HomeScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Theme.ColorPalette.primaryColor)
+                    .background(MaterialTheme.colorScheme.background)
                     .requiredHeight(100.dp)
                     .padding(15.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -122,7 +123,7 @@ fun HomeScreen(
                         },
                         imeAction = ImeAction.Done,
                         maxLines = 1,
-                        textStyle = Theme.Typography.h6,
+                        textStyle = MaterialTheme.typography.labelLarge.copy( color = MaterialTheme.colorScheme.primary ),
                         placeHolderTitle = "Search here...",
                         onDoneClick = {
 
@@ -143,51 +144,48 @@ fun HomeScreen(
 
         }
 
+        if (openAddNoteDialog.value) {
 
+            AddNoteDialog(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background),
+                onDismiss = {
+                    openAddNoteDialog.value = false
+                },
+                onSave = { title, description ->
 
-    }
+                    openAddNoteDialog.value = false
 
-    if (openAddNoteDialog.value) {
+                    val id = System.currentTimeMillis()
 
-        AddNoteDialog(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Theme.ColorPalette.primaryColor),
-            onDismiss = {
-                openAddNoteDialog.value = false
-            },
-            onSave = { title, description ->
+                    val note = Note(
+                        id,
+                        title,
+                        description,
+                        (0..5).random(),
+                        id
+                    )
 
-                openAddNoteDialog.value = false
+                    homeViewModel.addNote(note).invokeOnCompletion {
 
-                val id = System.currentTimeMillis()
+                        if (it == null) {
+                            Toast.makeText(
+                                context,
+                                "Saved $title",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
 
-                val note = Note(
-                    id,
-                    title,
-                    description,
-                    (0..5).random(),
-                    id
-                )
-
-                homeViewModel.addNote(note).invokeOnCompletion {
-
-                    if (it == null) {
-                        Toast.makeText(
-                            context,
-                            "Saved $title",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
 
-                    //homeViewModel.loadNext {  }
-
                 }
+            )
 
-            }
-        )
+        }
 
     }
+
 
 }
 
@@ -209,7 +207,7 @@ fun DisplayNotes(
             1f,
             animationSpec =
             tween(
-                durationMillis = 500,
+                durationMillis = 1000,
                 easing = {
                     OvershootInterpolator(4f).getInterpolation(it)
                 })
@@ -224,7 +222,7 @@ fun DisplayNotes(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Theme.ColorPalette.primaryColor)
+                .background(MaterialTheme.colorScheme.background)
                 .alpha(starting.value),
             contentAlignment = Alignment.Center
         ) {
@@ -232,7 +230,7 @@ fun DisplayNotes(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Theme.ColorPalette.primaryColor)
+                    .background(MaterialTheme.colorScheme.background)
                     .align(Alignment.Center)
                     .noRippleClickable(addNote),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -252,7 +250,7 @@ fun DisplayNotes(
                     text = if (homeViewModel.searchQuery.isBlank()) "Nothing here..." else "Nothing matches your query...",
                     textAlign = TextAlign.Center,
                     style = TextStyle(
-                        color = Theme.ColorPalette.secondaryColor.copy(0.4f),
+                        color = MaterialTheme.colorScheme.primary.copy(0.4f),
                         fontSize = 16.sp
                     )
                 )
@@ -264,7 +262,7 @@ fun DisplayNotes(
                         text = "Add some notes and they will appear here",
                         textAlign = TextAlign.Center,
                         style = TextStyle(
-                            color = Theme.ColorPalette.primaryColor.copy(0.2F),
+                            color = MaterialTheme.colorScheme.primary.copy(0.2F),
                             fontSize = 20.sp
                         )
                     )
@@ -280,7 +278,7 @@ fun DisplayNotes(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Theme.ColorPalette.primaryColor),
+                .background(MaterialTheme.colorScheme.background),
             contentPadding = PaddingValues(16.dp)
         ) {
 
@@ -292,9 +290,13 @@ fun DisplayNotes(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(2.dp)
+                        .clickable {
+                            onNoteClicked.invoke(note.id)
+                        }
                         .onSwipe(
                             onSwipeLeft = {
-                                false
+                                onNoteDeleted.invoke(note.id)
+                                true
                             },
                             onSwipeRight = {
                                 onNoteDeleted.invoke(note.id)
@@ -322,7 +324,7 @@ fun DisplayNotes(
                                 text = note.title,
                                 modifier = Modifier
                                     .fillMaxWidth(),
-                                style = Theme.Typography.bold14.copy(
+                                style = MaterialTheme.typography.labelLarge.copy(
                                     textAlign = TextAlign.Center
                                 )
                             )
@@ -333,7 +335,7 @@ fun DisplayNotes(
                                 text = note.description,
                                 modifier = Modifier
                                     .fillMaxWidth(),
-                                style = Theme.Typography.bold14.copy(
+                                style = MaterialTheme.typography.labelLarge.copy(
                                     textAlign = TextAlign.Center
                                 )
                             )

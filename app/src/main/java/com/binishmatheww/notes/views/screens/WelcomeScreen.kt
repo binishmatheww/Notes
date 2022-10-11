@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -18,35 +19,39 @@ import com.binishmatheww.notes.core.Theme
 @Composable
 fun WelcomeScreen( onComplete : () -> Unit ) {
 
-    val size = remember { Animatable(1f) }
+    Theme.NotesTheme {
 
-    LaunchedEffect(true){
-        size.animateTo(
-            2f,
-            animationSpec = tween(
-                durationMillis = 2000
+        val size = remember { Animatable(1f) }
+
+        LaunchedEffect(true){
+            size.animateTo(
+                2f,
+                animationSpec = tween(
+                    durationMillis = 2000
+                )
             )
-        )
-        onComplete.invoke()
-    }
+            onComplete.invoke()
+        }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Theme.ColorPalette.primaryColor),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(text = LocalContext.current.getString(R.string.spaced_app_name),
+        Column(
             modifier = Modifier
-                .wrapContentHeight()
-                .wrapContentWidth()
-                .graphicsLayer {
-                    scaleX = size.value
-                    scaleY = size.value
-                },
-            style = Theme.Typography.bold24
-        )
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(text = LocalContext.current.getString(R.string.spaced_app_name),
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .wrapContentWidth()
+                    .graphicsLayer {
+                        scaleX = size.value
+                        scaleY = size.value
+                    },
+                style = MaterialTheme.typography.headlineLarge.copy(color = MaterialTheme.colorScheme.primary)
+            )
+        }
+
     }
 
 }
