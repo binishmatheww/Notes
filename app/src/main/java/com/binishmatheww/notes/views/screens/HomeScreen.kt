@@ -88,17 +88,163 @@ fun HomeScreen(
                     .fillMaxHeight(0.9f)
             ) {
 
-                DisplayNotes(
-                    homeViewModel = homeViewModel,
-                    addNote = {
-                        openAddNoteDialog.value = true
-                    },
-                    onNoteClicked = {
-                        openAddNoteDialog.value = false
-                    },
-                    onNoteDeleted = {
-                        homeViewModel.deleteNoteById(it)
+                val starting = remember { Animatable(0f) }
+
+                LaunchedEffect(
+                    key1 = true,
+                    block = {
+
+                        starting.animateTo(
+                            1f,
+                            animationSpec =
+                            tween(
+                                durationMillis = 1000,
+                                easing = {
+                                    OvershootInterpolator(4f).getInterpolation(it)
+                                })
+                        )
+
                     })
+
+                val notes by homeViewModel.getNotesByQuery().collectAsState(initial = arrayListOf())
+
+                if(notes.isEmpty()){
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                            .alpha(starting.value),
+                        contentAlignment = Alignment.Center
+                    ) {
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.background)
+                                .align(Alignment.Center)
+                                .noRippleClickable{
+                                    openAddNoteDialog.value = true
+                                },
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+                            Image(
+                                modifier = Modifier
+                                    .size(75.dp)
+                                    .alpha(0.5F),
+                                painter = painterResource(id = R.drawable.note),
+                                contentDescription = "Logo",
+                            )
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            Text(
+                                text = if (homeViewModel.searchQuery.isBlank()) "Nothing here..." else "Nothing matches your query...",
+                                textAlign = TextAlign.Center,
+                                style = TextStyle(
+                                    color = MaterialTheme.colorScheme.primary.copy(0.4f),
+                                    fontSize = 16.sp
+                                )
+                            )
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            if (homeViewModel.searchQuery.isBlank()){
+                                Text(
+                                    text = "Add some notes and they will appear here",
+                                    textAlign = TextAlign.Center,
+                                    style = TextStyle(
+                                        color = MaterialTheme.colorScheme.primary.copy(0.2F),
+                                        fontSize = 20.sp
+                                    )
+                                )
+                            }
+
+                        }
+
+                    }
+
+                }
+                else{
+
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.background),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+
+                        items(notes){ note ->
+
+                            Card(
+                                elevation = 2.dp,
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(2.dp)
+                                    .clickable {
+                                        openAddNoteDialog.value = false
+                                    }
+                                    .onSwipe(
+                                        onSwipeLeft = {
+                                            homeViewModel.deleteNoteById(note.id)
+                                            true
+                                        },
+                                        onSwipeRight = {
+                                            homeViewModel.deleteNoteById(note.id)
+                                            true
+                                        }
+                                    )
+                            ){
+
+                                Box(
+                                    modifier = Modifier
+                                        .background(
+                                            Theme.ColorPalette
+                                                .getColorByNumber(note.colorId)
+                                                .copy(alpha = 0.6f)
+                                        )
+                                        .padding(horizontal = 16.dp)
+                                ) {
+
+
+                                    Column(modifier = Modifier
+                                        .align(Alignment.TopCenter)
+                                        .padding(start = 20.dp, top = 20.dp, bottom = 20.dp, end = 30.dp)) {
+
+                                        Text(
+                                            text = note.title,
+                                            modifier = Modifier
+                                                .fillMaxWidth(),
+                                            style = MaterialTheme.typography.labelLarge.copy(
+                                                textAlign = TextAlign.Center
+                                            )
+                                        )
+
+                                        Spacer(modifier = Modifier.height(20.dp))
+
+                                        Text(
+                                            text = note.description,
+                                            modifier = Modifier
+                                                .fillMaxWidth(),
+                                            style = MaterialTheme.typography.labelLarge.copy(
+                                                textAlign = TextAlign.Center
+                                            )
+                                        )
+
+                                    }
+
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
 
             }
 
@@ -186,171 +332,5 @@ fun HomeScreen(
 
     }
 
-
-}
-
-@Composable
-fun DisplayNotes(
-    homeViewModel : HomeViewModel,
-    addNote : () -> Unit,
-    onNoteClicked : (Long) -> Unit,
-    onNoteDeleted : (Long) -> Unit
-) {
-
-    val starting = remember { Animatable(0f) }
-
-    LaunchedEffect(
-        key1 = true,
-        block = {
-
-        starting.animateTo(
-            1f,
-            animationSpec =
-            tween(
-                durationMillis = 1000,
-                easing = {
-                    OvershootInterpolator(4f).getInterpolation(it)
-                })
-        )
-
-    })
-
-    val notes by homeViewModel.getNotesByQuery().collectAsState(initial = arrayListOf())
-
-    if(notes.isEmpty()){
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .alpha(starting.value),
-            contentAlignment = Alignment.Center
-        ) {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background)
-                    .align(Alignment.Center)
-                    .noRippleClickable(addNote),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                Image(
-                    modifier = Modifier
-                        .size(75.dp)
-                        .alpha(0.5F),
-                    painter = painterResource(id = R.drawable.note),
-                    contentDescription = "Logo",
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Text(
-                    text = if (homeViewModel.searchQuery.isBlank()) "Nothing here..." else "Nothing matches your query...",
-                    textAlign = TextAlign.Center,
-                    style = TextStyle(
-                        color = MaterialTheme.colorScheme.primary.copy(0.4f),
-                        fontSize = 16.sp
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                if (homeViewModel.searchQuery.isBlank()){
-                    Text(
-                        text = "Add some notes and they will appear here",
-                        textAlign = TextAlign.Center,
-                        style = TextStyle(
-                            color = MaterialTheme.colorScheme.primary.copy(0.2F),
-                            fontSize = 20.sp
-                        )
-                    )
-                }
-
-            }
-
-        }
-
-    }
-    else{
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background),
-            contentPadding = PaddingValues(16.dp)
-        ) {
-
-            items(notes){ note ->
-
-                Card(
-                    elevation = 2.dp,
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(2.dp)
-                        .clickable {
-                            onNoteClicked.invoke(note.id)
-                        }
-                        .onSwipe(
-                            onSwipeLeft = {
-                                onNoteDeleted.invoke(note.id)
-                                true
-                            },
-                            onSwipeRight = {
-                                onNoteDeleted.invoke(note.id)
-                                true
-                            }
-                        )
-                ){
-
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                Theme.ColorPalette
-                                    .getColorByNumber(note.colorId)
-                                    .copy(alpha = 0.6f)
-                            )
-                            .padding(horizontal = 16.dp)
-                    ) {
-
-
-                        Column(modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .padding(start = 20.dp, top = 20.dp, bottom = 20.dp, end = 30.dp)) {
-
-                            Text(
-                                text = note.title,
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                style = MaterialTheme.typography.labelLarge.copy(
-                                    textAlign = TextAlign.Center
-                                )
-                            )
-
-                            Spacer(modifier = Modifier.height(20.dp))
-
-                            Text(
-                                text = note.description,
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                style = MaterialTheme.typography.labelLarge.copy(
-                                    textAlign = TextAlign.Center
-                                )
-                            )
-
-                        }
-
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
 
 }
