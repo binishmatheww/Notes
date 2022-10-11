@@ -37,7 +37,6 @@ import com.binishmatheww.notes.core.utilities.onSwipe
 import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.viewModels.HomeViewModel
 import com.binishmatheww.notes.views.composables.AddNoteDialog
-import com.binishmatheww.notes.views.composables.ImageButton
 import com.binishmatheww.notes.views.composables.TextInputField
 
 @Composable
@@ -123,7 +122,7 @@ fun HomeScreen(
                                 .fillMaxWidth()
                                 .background(MaterialTheme.colorScheme.background)
                                 .align(Alignment.Center)
-                                .noRippleClickable{
+                                .noRippleClickable {
                                     openAddNoteDialog.value = true
                                 },
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -143,7 +142,7 @@ fun HomeScreen(
                                 text = if (homeViewModel.searchQuery.isBlank()) "Nothing here..." else "Nothing matches your query...",
                                 textAlign = TextAlign.Center,
                                 style = TextStyle(
-                                    color = MaterialTheme.colorScheme.primary.copy(0.4f),
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                                     fontSize = 16.sp
                                 )
                             )
@@ -155,7 +154,7 @@ fun HomeScreen(
                                     text = "Add some notes and they will appear here",
                                     textAlign = TextAlign.Center,
                                     style = TextStyle(
-                                        color = MaterialTheme.colorScheme.primary.copy(0.2F),
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                                         fontSize = 20.sp
                                     )
                                 )
@@ -211,7 +210,12 @@ fun HomeScreen(
 
                                     Column(modifier = Modifier
                                         .align(Alignment.TopCenter)
-                                        .padding(start = 20.dp, top = 20.dp, bottom = 20.dp, end = 30.dp)) {
+                                        .padding(
+                                            start = 20.dp,
+                                            top = 20.dp,
+                                            bottom = 20.dp,
+                                            end = 30.dp
+                                        )) {
 
                                         Text(
                                             text = note.title,
@@ -253,38 +257,70 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.background)
                     .requiredHeight(100.dp)
-                    .padding(15.dp),
+                    .padding(
+                        start = 10.dp,
+                        end = 10.dp
+                    ),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Box( modifier = Modifier.requiredWidth(250.dp)){
+                TextInputField(
+                    modifier = Modifier
+                        .background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = MaterialTheme.shapes.large
+                        )
+                        .requiredHeight(50.dp)
+                        .fillMaxWidth()
+                        .weight(
+                            weight = 7.5f
+                        ),
+                    value = homeViewModel.searchQuery,
+                    onValueChange = {
+                        homeViewModel.searchQuery = it
+                    },
+                    imeAction = ImeAction.Done,
+                    maxLines = 1,
+                    textStyle = MaterialTheme.typography.labelLarge.copy( color = MaterialTheme.colorScheme.onPrimary ),
+                    placeHolderTitle = "Search here...",
+                    onDoneClick = {
 
-                    TextInputField(
-                        modifier = Modifier
-                            .fillMaxWidth(0.7f),
-                        value = homeViewModel.searchQuery,
-                        onValueChange = {
-                            homeViewModel.searchQuery = it
-                        },
-                        imeAction = ImeAction.Done,
-                        maxLines = 1,
-                        textStyle = MaterialTheme.typography.labelLarge.copy( color = MaterialTheme.colorScheme.primary ),
-                        placeHolderTitle = "Search here...",
-                        onDoneClick = {
-
-                        }
-                    )
-
-                }
-
-                ImageButton(
-                    modifier = Modifier.size(50.dp),
-                    icon = Icons.Outlined.Add,
-                    onClick = {
-                        openAddNoteDialog.value = true
                     }
                 )
+
+                Spacer(
+                    modifier = Modifier
+                        .width(5.dp)
+                        .weight(
+                            weight = 0.5f
+                        )
+                )
+
+                Box(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .weight(
+                            weight = 2f
+                        )
+                        .background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = MaterialTheme.shapes.large
+                        )
+                        .clickable(onClick = {
+                            openAddNoteDialog.value = true
+                        }),
+                    contentAlignment = Alignment.Center
+                ){
+                    Icon(
+                        imageVector = Icons.Outlined.Add,
+                        tint= MaterialTheme.colorScheme.onPrimary,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .size(28.dp)
+                    )
+                }
 
             }
 
