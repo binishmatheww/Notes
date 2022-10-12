@@ -8,7 +8,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.binishmatheww.notes.core.constants.Routes
-import com.binishmatheww.notes.core.Theme
 import com.binishmatheww.notes.views.screens.HomeScreen
 import com.binishmatheww.notes.views.screens.WelcomeScreen
 import dagger.hilt.android.AndroidEntryPoint
