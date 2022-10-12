@@ -139,26 +139,13 @@ fun HomeScreen(
                             Spacer(modifier = Modifier.height(12.dp))
 
                             Text(
-                                text = if (homeViewModel.searchQuery.isBlank()) "Nothing here..." else "Nothing matches your query...",
+                                text = if (homeViewModel.searchQuery.isBlank()) "Add some notes and they will appear here" else "Nothing matches your query...",
                                 textAlign = TextAlign.Center,
                                 style = TextStyle(
                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                                     fontSize = 16.sp
                                 )
                             )
-
-                            Spacer(modifier = Modifier.height(12.dp))
-
-                            if (homeViewModel.searchQuery.isBlank()){
-                                Text(
-                                    text = "Add some notes and they will appear here",
-                                    textAlign = TextAlign.Center,
-                                    style = TextStyle(
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                        fontSize = 20.sp
-                                    )
-                                )
-                            }
 
                         }
 
