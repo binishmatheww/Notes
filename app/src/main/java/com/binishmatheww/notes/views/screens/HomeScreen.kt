@@ -46,7 +46,7 @@ fun HomeScreen(
 
     Theme.NotesTheme {
 
-        val context = LocalContext.current.applicationContext
+        val context = LocalContext.current
 
         val lifeCycleState = LocalLifecycleOwner.current.lifecycle.observeAsSate().value
 
@@ -73,7 +73,7 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Text(text = LocalContext.current.getString(R.string.spaced_app_name),
+                Text(text = context.getString(R.string.spacedAppName),
                     modifier = Modifier
                         .wrapContentHeight()
                         .wrapContentWidth(),
@@ -133,13 +133,13 @@ fun HomeScreen(
                                     .size(75.dp)
                                     .alpha(0.5F),
                                 painter = painterResource(id = R.drawable.note),
-                                contentDescription = "Logo",
+                                contentDescription = context.getString(R.string.appName),
                             )
 
                             Spacer(modifier = Modifier.height(12.dp))
 
                             Text(
-                                text = if (homeViewModel.searchQuery.isBlank()) "Add some notes and they will appear here" else "Nothing matches your query...",
+                                text = if (homeViewModel.searchQuery.isBlank()) context.getString(R.string.addNotesAndTheyWillBeShownHere) else context.getString(R.string.nothingMatchesYourQuery),
                                 textAlign = TextAlign.Center,
                                 style = TextStyle(
                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -175,10 +175,20 @@ fun HomeScreen(
                                     .onSwipe(
                                         onSwipeLeft = {
                                             homeViewModel.deleteNoteById(note.id)
+                                            Toast.makeText(
+                                                context,
+                                                context.getText(R.string.deletedTheNote),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                             true
                                         },
                                         onSwipeRight = {
                                             homeViewModel.deleteNoteById(note.id)
+                                            Toast.makeText(
+                                                context,
+                                                context.getText(R.string.deletedTheNote),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                             true
                                         }
                                     )
@@ -270,7 +280,7 @@ fun HomeScreen(
                     imeAction = ImeAction.Done,
                     maxLines = 1,
                     textStyle = MaterialTheme.typography.labelLarge.copy( color = MaterialTheme.colorScheme.onPrimary ),
-                    placeHolderTitle = "Search here...",
+                    placeHolderTitle = context.getString(R.string.searchHere),
                     onDoneClick = {
 
                     }
@@ -341,7 +351,7 @@ fun HomeScreen(
                         if (it == null) {
                             Toast.makeText(
                                 context,
-                                "Saved $title",
+                                context.getText(R.string.savedTheNote),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

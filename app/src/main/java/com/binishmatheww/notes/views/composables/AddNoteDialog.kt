@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.binishmatheww.notes.core.Theme
+import com.binishmatheww.notes.R
 
 @Composable
 fun AddNoteDialog(
@@ -29,7 +30,7 @@ fun AddNoteDialog(
 
     Theme.NotesTheme {
 
-        val context = LocalContext.current.applicationContext
+        val context = LocalContext.current
 
         val title = remember { mutableStateOf("") }
         val description = remember { mutableStateOf("") }
@@ -60,7 +61,7 @@ fun AddNoteDialog(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "Add a note",
+                            text = context.getString(R.string.addNote),
                             modifier = Modifier
                                 .padding(top = 12.dp),
                             style = MaterialTheme.typography.labelLarge.copy( color = MaterialTheme.colorScheme.primary ),
@@ -71,7 +72,7 @@ fun AddNoteDialog(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Text(
-                        text = "Title",
+                        text = context.getString(R.string.title),
                         modifier = Modifier.padding(start = 14.dp),
                         style = MaterialTheme.typography.labelLarge.copy( color = MaterialTheme.colorScheme.primary )
                     )
@@ -88,7 +89,7 @@ fun AddNoteDialog(
                         },
                         imeAction = ImeAction.Next,
                         textStyle = MaterialTheme.typography.labelLarge.copy( color = MaterialTheme.colorScheme.primary ),
-                        placeHolderTitle = "Note title...",
+                        placeHolderTitle = context.getString(R.string.enterNoteTitle),
                         onNextClick = {
 
                         }
@@ -97,7 +98,7 @@ fun AddNoteDialog(
                     Spacer(modifier = Modifier.height(10.dp))
 
                     Text(
-                        text = "Description",
+                        text = context.getString(R.string.description),
                         modifier = Modifier.padding(start = 14.dp),
                         style = MaterialTheme.typography.labelLarge.copy( color = MaterialTheme.colorScheme.primary )
                     )
@@ -114,7 +115,7 @@ fun AddNoteDialog(
                         },
                         imeAction = ImeAction.Done,
                         textStyle = MaterialTheme.typography.labelLarge.copy( color = MaterialTheme.colorScheme.primary ),
-                        placeHolderTitle = "Note description...",
+                        placeHolderTitle = context.getString(R.string.enterNoteDescription),
                         onDoneClick = {
 
                         }
@@ -129,7 +130,7 @@ fun AddNoteDialog(
                         horizontalArrangement = Arrangement.End
                     ) {
                         Text(
-                            text = "Save",
+                            text = context.getString(R.string.save),
                             modifier = Modifier
                                 .clickable {
                                     if ( title.value.isNotBlank() ) {
@@ -138,7 +139,7 @@ fun AddNoteDialog(
                                         Toast
                                             .makeText(
                                                 context,
-                                                "Enter something",
+                                                context.getText(R.string.enterNoteTitle),
                                                 Toast.LENGTH_SHORT
                                             )
                                             .show()

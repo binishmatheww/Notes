@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="appName">"നോട്ടുകൾ"</string>
+    <string name="spacedAppName">നോ ട്ടു ക ൾ</string>
+    <string name="addNotesAndTheyWillBeShownHere">"ആഡ് ചെയ്യുന്ന നോട്ടുകൾ ഇവിടെ കാണിക്കപ്പെടും"</string>
+    <string name="nothingMatchesYourQuery">"നിങ്ങൾ തിരഞ്ഞതുമായി ഒന്നിനും  സാമ്യം ഇല്ല"</string>
+    <string name="searchHere">"ഇവിടെ തിരയുക"</string>
+    <string name="addNote">"ഒരു നോട്ട് ആഡ് ചെയ്യുക"</string>
+    <string name="savedTheNote">"നോട്ട് സേവ് ചെയ്തു"</string>
+    <string name="title">തലക്കെട്ട്</string>
+    <string name="enterNoteTitle">"നോട്ടിന്റെ തലക്കെട്ട് അടിക്കുക"</string>
+    <string name="description">"വിവരണം"</string>
+    <string name="enterNoteDescription">"നോട്ടിന്റെ വിവരണം അടിക്കുക"</string>
+    <string name="save">"സേവ്"</string>
+    <string name="deletedTheNote">"നോട്ട് ഡിലീറ്റ് ചെയ്തു "</string>
+</resources>

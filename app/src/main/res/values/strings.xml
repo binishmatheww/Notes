@@ -1,4 +1,17 @@
 <resources>
-    <string name="app_name">The Notes</string>
-    <string name="spaced_app_name">The\u0020\u0020\u0020N o t e s</string>
+
+    <string name="appName">Notes</string>
+    <string name="spacedAppName">N o t e s</string>
+    <string name="addNotesAndTheyWillBeShownHere">Add notes and they will be shown here</string>
+    <string name="nothingMatchesYourQuery">Nothing matches your query</string>
+    <string name="searchHere">Search here</string>
+    <string name="addNote">Add a note</string>
+    <string name="savedTheNote">Saved the note</string>
+    <string name="title">Title</string>
+    <string name="enterNoteTitle">Enter note title</string>
+    <string name="description">Description</string>
+    <string name="enterNoteDescription">Enter note description</string>
+    <string name="save">Save</string>
+    <string name="deletedTheNote">Deleted the note</string>
+
 </resources>

@@ -40,7 +40,7 @@ fun WelcomeScreen( onComplete : () -> Unit ) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = LocalContext.current.getString(R.string.spaced_app_name),
+            Text(text = LocalContext.current.getString(R.string.spacedAppName),
                 modifier = Modifier
                     .wrapContentHeight()
                     .wrapContentWidth()
