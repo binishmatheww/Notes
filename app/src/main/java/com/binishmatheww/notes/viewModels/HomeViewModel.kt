@@ -9,6 +9,7 @@ import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.models.repositories.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,6 +17,21 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(private val noteRepository: NoteRepository) : ViewModel() {
 
     var searchQuery by mutableStateOf("")
+
+    var notes = MutableStateFlow<List<Note>>(emptyList())
+    private set
+
+    init {
+
+        viewModelScope.launch {
+
+            getNotesByQuery().collect{
+                notes.emit(it)
+            }
+
+        }
+
+    }
 
     fun getNotesByQuery() : Flow<List<Note>>{
 

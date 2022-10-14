@@ -2,7 +2,9 @@ package com.binishmatheww.notes.views.screens
 
 import android.view.animation.OvershootInterpolator
 import android.widget.Toast
+import androidx.compose.animation.*
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,9 +41,11 @@ import com.binishmatheww.notes.viewModels.HomeViewModel
 import com.binishmatheww.notes.views.composables.AddNoteDialog
 import com.binishmatheww.notes.views.composables.TextInputField
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun HomeScreen(
-    homeViewModel : HomeViewModel = hiltViewModel()
+    homeViewModel : HomeViewModel = hiltViewModel(),
+    onNoteClick : (Long) -> Unit,
 ) {
 
     Theme.NotesTheme {
@@ -51,7 +55,6 @@ fun HomeScreen(
         val lifeCycleState = LocalLifecycleOwner.current.lifecycle.observeAsSate().value
 
         val openAddNoteDialog = remember { mutableStateOf(false) }
-
 
         if ( lifeCycleState == Lifecycle.Event.ON_PAUSE ) {
             openAddNoteDialog.value = false
@@ -73,7 +76,8 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Text(text = context.getString(R.string.spacedAppName),
+                Text(
+                    text = context.getString(R.string.spacedAppName),
                     modifier = Modifier
                         .wrapContentHeight()
                         .wrapContentWidth(),
@@ -87,33 +91,14 @@ fun HomeScreen(
                     .fillMaxHeight(0.9f)
             ) {
 
-                val starting = remember { Animatable(0f) }
-
-                LaunchedEffect(
-                    key1 = true,
-                    block = {
-
-                        starting.animateTo(
-                            1f,
-                            animationSpec =
-                            tween(
-                                durationMillis = 1000,
-                                easing = {
-                                    OvershootInterpolator(4f).getInterpolation(it)
-                                })
-                        )
-
-                    })
-
-                val notes by homeViewModel.getNotesByQuery().collectAsState(initial = arrayListOf())
+                val notes by homeViewModel.notes.collectAsState(initial = arrayListOf())
 
                 if(notes.isEmpty()){
 
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
-                            .alpha(starting.value),
+                            .background(MaterialTheme.colorScheme.background),
                         contentAlignment = Alignment.Center
                     ) {
 
@@ -171,24 +156,29 @@ fun HomeScreen(
                                     .padding(2.dp)
                                     .clickable {
                                         openAddNoteDialog.value = false
+                                        onNoteClick.invoke(note.id)
                                     }
                                     .onSwipe(
                                         onSwipeLeft = {
                                             homeViewModel.deleteNoteById(note.id)
-                                            Toast.makeText(
-                                                context,
-                                                context.getText(R.string.deletedTheNote),
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                            Toast
+                                                .makeText(
+                                                    context,
+                                                    context.getText(R.string.deletedTheNote),
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                .show()
                                             true
                                         },
                                         onSwipeRight = {
                                             homeViewModel.deleteNoteById(note.id)
-                                            Toast.makeText(
-                                                context,
-                                                context.getText(R.string.deletedTheNote),
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                            Toast
+                                                .makeText(
+                                                    context,
+                                                    context.getText(R.string.deletedTheNote),
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                .show()
                                             true
                                         }
                                     )

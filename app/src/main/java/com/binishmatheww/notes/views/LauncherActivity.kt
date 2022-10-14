@@ -4,11 +4,14 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.binishmatheww.notes.core.constants.Routes
 import com.binishmatheww.notes.views.screens.HomeScreen
+import com.binishmatheww.notes.views.screens.NoteDetailsScreen
 import com.binishmatheww.notes.views.screens.WelcomeScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -30,20 +33,48 @@ class LauncherActivity : AppCompatActivity() {
 
             val navController = rememberNavController()
 
-            NavHost( navController = navController, startDestination = Routes.welcomeScreen ){
+            NavHost(
+                navController = navController,
+                startDestination = Routes.welcomeScreen,
+            ){
 
-                composable( route = Routes.welcomeScreen ){
+                composable(
+                    route = Routes.welcomeScreen
+                ){
 
-                    WelcomeScreen{
-                        navController.popBackStack()
-                        navController.navigate(Routes.homeScreen)
-                    }
+                    WelcomeScreen(
+                        onComplete = {
+                            navController.popBackStack()
+                            navController.navigate(Routes.homeScreen)
+                        }
+                    )
 
                 }
 
-                composable( route = Routes.homeScreen ){
+                composable(
+                    route = Routes.homeScreen
+                ){
 
-                    HomeScreen()
+                    HomeScreen(
+                        onNoteClick = {
+                            navController.navigate(Routes.noteDetailsScreen.plus("/$it"))
+                        }
+                    )
+
+                }
+
+                composable(
+                    route = Routes.noteDetailsScreen.plus("/{id}"),
+                    arguments = listOf(
+                        navArgument("id"){
+                            type = NavType.LongType
+                        }
+                    )
+                ){ backStackEntry ->
+
+                    NoteDetailsScreen(
+                        noteId = backStackEntry.arguments?.getLong("id") ?: 0
+                    )
 
                 }
 

@@ -15,10 +15,8 @@ class NoteRepository @Inject constructor( private val noteDatabase : NoteDatabas
 
     }
 
-    suspend fun getNoteById( id : Long ) : Note? {
-        return withContext(Dispatchers.IO) {
-            noteDatabase.notes().getNoteById(id)
-        }
+    fun getNoteById( id : Long ) : Flow<Note?> {
+        return noteDatabase.notes().getNoteById(id)
     }
 
     suspend fun addNote( note : Note ) {

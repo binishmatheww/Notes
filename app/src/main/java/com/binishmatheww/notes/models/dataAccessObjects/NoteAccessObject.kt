@@ -23,7 +23,7 @@ interface NoteAccessObject {
     fun deleteNoteBy( searchQuery : String )
 
     @Query("SELECT * FROM notes WHERE id = :id")
-    fun getNoteById( id : Long ) : Note?
+    fun getNoteById( id : Long ) : Flow<Note?>
 
     @Query("SELECT * FROM notes WHERE id > :start ORDER BY id LIMIT :limit")
     fun getNotesByQueryAfterId( start : Long, limit : Int ) : List<Note>

@@ -78,6 +78,12 @@ android {
 
     }
 
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions {
+            freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -127,6 +133,7 @@ dependencies {
     implementation 'androidx.compose.material:material-icons-core:1.2.1'
     implementation 'androidx.compose.material:material-icons-extended:1.2.1'
     implementation 'androidx.activity:activity-compose:1.4.0'
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1'
 
     // Accompanist systemUiController
