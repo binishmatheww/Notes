@@ -300,17 +300,13 @@ fun HomeScreen(
                         id
                     )
 
-                    homeViewModel.addNote(note).invokeOnCompletion {
+                    homeViewModel.addNote(note)
 
-                        if (it == null) {
-                            Toast.makeText(
-                                context,
-                                context.getText(R.string.savedTheNote),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-
-                    }
+                    Toast.makeText(
+                        context,
+                        context.getText(R.string.savedTheNote),
+                        Toast.LENGTH_SHORT
+                    ).show()
 
                 }
             )
