@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface NoteAccessObject {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addNote( note : Note ) : Int
+    fun addNote( note : Note ) : Long
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun updateNote( note : Note ) : Int
