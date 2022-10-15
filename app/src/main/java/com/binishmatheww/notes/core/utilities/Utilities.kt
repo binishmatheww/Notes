@@ -20,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -42,11 +43,31 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.math.absoluteValue
 
 fun log(lambda: () -> String) = log("Notes", lambda)
 
 fun log(tag: String = "Notes", lambda: () -> String) = Log.wtf( tag, lambda.invoke() )
+
+/**
+ * Function to convert milliseconds to date in dd/MM/yyyy hh:mm:ss.SSS format.
+ */
+fun Long.toDate() : String {
+
+    return try {
+        val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm aa")
+
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = this
+        formatter.format(calendar.time)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        ""
+    }
+
+}
 
 inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier =
     composed {
@@ -79,7 +100,7 @@ fun Modifier.onSwipe(
 
     val offsetX = remember { Animatable(0f) }
 
-    val maximumWidth = with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.toPx() } * 0.5f
+    val maximumWidth = with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.toPx() }
 
     pointerInput(Unit) {
         // Used to calculate a settling position of a fling animation.
@@ -103,8 +124,9 @@ fun Modifier.onSwipe(
                         }
                         // Record the velocity of the drag.
                         velocityTracker.addPosition(change.uptimeMillis, change.position)
-                        // Consume the gesture event, not passed to external
-                        change.consumePositionChange()
+
+                    // Consume the gesture event, not passed to external
+                    //if (change.positionChange() != Offset.Zero) change.consume()
 
                     }
                 }

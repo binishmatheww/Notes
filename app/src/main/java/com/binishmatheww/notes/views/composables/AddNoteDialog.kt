@@ -83,11 +83,11 @@ fun AddNoteDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .requiredHeight(50.dp),
-                        value = title.value,
+                        text = title.value,
                         onValueChange = {
                             title.value = it
                         },
-                        imeAction = ImeAction.Next,
+                        //imeAction = ImeAction.Next,
                         textStyle = MaterialTheme.typography.labelLarge.copy( color = MaterialTheme.colorScheme.primary ),
                         placeHolderTitle = context.getString(R.string.enterNoteTitle),
                         onNextClick = {
@@ -109,11 +109,11 @@ fun AddNoteDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .requiredHeight(50.dp),
-                        value = description.value,
+                        text = description.value,
                         onValueChange = {
                             description.value = it
                         },
-                        imeAction = ImeAction.Done,
+                        //imeAction = ImeAction.Done,
                         textStyle = MaterialTheme.typography.labelLarge.copy( color = MaterialTheme.colorScheme.primary ),
                         placeHolderTitle = context.getString(R.string.enterNoteDescription),
                         onDoneClick = {

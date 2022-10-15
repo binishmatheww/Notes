@@ -13,4 +13,5 @@
     <string name="enterNoteDescription">"നോട്ടിന്റെ വിവരണം അടിക്കുക"</string>
     <string name="save">"സേവ്"</string>
     <string name="deletedTheNote">"നോട്ട് ഡിലീറ്റ് ചെയ്തു "</string>
+    <string name="addedAt">ആഡ് ചെയ്തത്  :</string>
 </resources>

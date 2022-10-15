@@ -20,15 +20,15 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun TextInputField(
     modifier: Modifier = Modifier,
-    value: String,
+    text: String,
     textStyle : TextStyle = TextStyle(
         color = Color.Black,
         fontWeight = FontWeight.Medium,
         fontSize = 20.sp
-    ) ,
+    ),
     onValueChange: (String) -> Unit,
-    placeHolderTitle: String,
-    imeAction: ImeAction = ImeAction.Next,
+    placeHolderTitle: String = "",
+    imeAction: ImeAction = ImeAction.None,
     maxLines : Int? = null,
     onNextClick: () -> Unit = {},
     onDoneClick: () -> Unit = {}
@@ -37,7 +37,7 @@ fun TextInputField(
 
     TextField(
         modifier = modifier,
-        value = value,
+        value = text,
         onValueChange = onValueChange,
         placeholder = {
             Text(

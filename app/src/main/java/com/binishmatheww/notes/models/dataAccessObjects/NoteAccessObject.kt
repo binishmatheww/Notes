@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface NoteAccessObject {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addNote( note : Note )
 
-    @Update
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     fun updateNote( note : Note )
 
     @Delete

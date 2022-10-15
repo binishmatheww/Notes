@@ -13,5 +13,6 @@
     <string name="enterNoteDescription">Enter note description</string>
     <string name="save">Save</string>
     <string name="deletedTheNote">Deleted the note</string>
+    <string name="addedAt">Added at :</string>
 
 </resources>

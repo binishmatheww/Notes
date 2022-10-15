@@ -1,10 +1,12 @@
 package com.binishmatheww.notes.viewModels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.models.repositories.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,6 +17,16 @@ class NoteDetailsViewModel @Inject constructor(private val noteRepository: NoteR
         return noteRepository.getNoteById(
             id = id
         )
+
+    }
+
+    fun addNote( note: Note){
+
+        viewModelScope.launch {
+
+            noteRepository.addNote(note)
+
+        }
 
     }
 
