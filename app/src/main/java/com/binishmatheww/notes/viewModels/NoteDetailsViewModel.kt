@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.models.repositories.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,14 +22,6 @@ class NoteDetailsViewModel @Inject constructor(private val noteRepository: NoteR
 
     }
 
-    fun addNote( note: Note){
-
-        viewModelScope.launch {
-
-            noteRepository.addNote(note)
-
-        }
-
-    }
+    fun addNote( note: Note ) = CoroutineScope(Dispatchers.IO).launch { noteRepository.addNote(note) }
 
 }

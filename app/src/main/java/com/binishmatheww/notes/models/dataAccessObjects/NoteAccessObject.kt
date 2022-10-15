@@ -8,19 +8,19 @@ import kotlinx.coroutines.flow.Flow
 interface NoteAccessObject {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addNote( note : Note )
+    fun addNote( note : Note ) : Int
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun updateNote( note : Note )
+    fun updateNote( note : Note ) : Int
 
     @Delete
-    fun deleteNote( note : Note )
+    fun deleteNote( note : Note ) : Int
 
     @Query("DELETE FROM notes WHERE id = :id")
-    fun deleteNoteById( id : Long )
+    fun deleteNoteById( id : Long ) : Int
 
     @Query("DELETE FROM notes WHERE title = :searchQuery OR description = :searchQuery")
-    fun deleteNoteBy( searchQuery : String )
+    fun deleteNoteBy( searchQuery : String ) : Int
 
     @Query("SELECT * FROM notes WHERE id = :id")
     fun getNoteById( id : Long ) : Flow<Note?>

@@ -13,6 +13,8 @@ import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.models.repositories.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.onEach
@@ -39,8 +41,8 @@ class HomeViewModel
 
     fun getNotes() = noteRepository.getNotesByQuery(searchQuery = searchQuery)
 
-    fun addNote( note : Note ) = viewModelScope.launch { noteRepository.addNote(note) }
+    fun addNote( note : Note ) = CoroutineScope(Dispatchers.IO).launch { noteRepository.addNote(note) }
 
-    fun deleteNoteById( id : Long ) = viewModelScope.launch { noteRepository.deleteNoteById(id) }
+    fun deleteNoteById( id : Long ) = CoroutineScope(Dispatchers.IO).launch { noteRepository.deleteNoteById(id) }
 
 }
