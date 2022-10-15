@@ -11,6 +11,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import com.binishmatheww.notes.R
@@ -48,7 +50,14 @@ fun WelcomeScreen( onComplete : () -> Unit ) {
                         scaleX = size.value
                         scaleY = size.value
                     },
-                style = MaterialTheme.typography.headlineLarge.copy(color = MaterialTheme.colorScheme.primary)
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    color = MaterialTheme.colorScheme.primary,
+                    shadow = Shadow(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        offset = Offset(4.0f, 8.0f),
+                        blurRadius = 3f
+                    )
+                )
             )
         }
 

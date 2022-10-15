@@ -22,7 +22,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -106,7 +108,14 @@ fun HomeScreen(
                     modifier = Modifier
                         .wrapContentHeight()
                         .wrapContentWidth(),
-                    style = MaterialTheme.typography.headlineLarge.copy(color = MaterialTheme.colorScheme.primary)
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        color = MaterialTheme.colorScheme.primary,
+                        shadow = Shadow(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            offset = Offset(4.0f, 8.0f),
+                            blurRadius = 3f
+                        )
+                    )
                 )
 
             }
