@@ -20,6 +20,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.binishmatheww.notes.R
 import com.binishmatheww.notes.core.Theme
+import com.binishmatheww.notes.core.utilities.log
 import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.viewModels.NoteDetailsViewModel
 import com.binishmatheww.notes.views.composables.TextInputField
@@ -31,7 +32,8 @@ import kotlinx.coroutines.withContext
 @Composable
 fun NoteDetailsScreen(
     noteId : Long,
-    noteDetailsViewModel : NoteDetailsViewModel = hiltViewModel()
+    noteDetailsViewModel : NoteDetailsViewModel = hiltViewModel(),
+    onNoteSaved : () -> Unit
 ){
 
     Theme.NotesTheme {
@@ -98,20 +100,21 @@ fun NoteDetailsScreen(
                         top.linkTo(parent.top, 16.dp)
                         end.linkTo(parent.end, 16.dp)
                     },
+                    enabled = title.isNotBlank() && (title != note?.title || description != note?.description),
                     onClick = {
-                        if(title.isNotBlank()){
 
-                            noteDetailsViewModel.addNote(
-                                Note(
-                                    id = noteId,
-                                    title = title,
-                                    description = description,
-                                    colorId = note?.colorId ?: 0,
-                                    modifiedAt = System.currentTimeMillis()
-                                )
+                        noteDetailsViewModel.addNote(
+                            Note(
+                                id = noteId,
+                                title = title,
+                                description = description,
+                                colorId = note?.colorId ?: 0,
+                                modifiedAt = System.currentTimeMillis()
                             )
+                        )
 
-                        }
+                        onNoteSaved.invoke()
+
                     }
                 ) {
                     Text(

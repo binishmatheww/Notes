@@ -73,7 +73,10 @@ class LauncherActivity : AppCompatActivity() {
                 ){ backStackEntry ->
 
                     NoteDetailsScreen(
-                        noteId = backStackEntry.arguments?.getLong("id") ?: 0
+                        noteId = backStackEntry.arguments?.getLong("id") ?: 0,
+                        onNoteSaved = {
+                            navController.popBackStack()
+                        }
                     )
 
                 }
