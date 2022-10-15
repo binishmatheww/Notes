@@ -11,6 +11,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -20,8 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.binishmatheww.notes.R
+import com.binishmatheww.notes.core.utilities.networkManagers.ConnectivityObserver
 
-object Theme{
+object Theme {
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
@@ -37,17 +39,10 @@ object Theme{
 
         val systemUiController = rememberSystemUiController()
 
-        if(darkTheme){
-            systemUiController.setSystemBarsColor(
-                color = colors.background,
-                darkIcons = false
-            )
-        }else{
-            systemUiController.setSystemBarsColor(
-                color = colors.background,
-                darkIcons = true
-            )
-        }
+        systemUiController.setSystemBarsColor(
+            color = colors.background,
+            darkIcons = !darkTheme
+        )
 
 
         MaterialTheme(
@@ -70,7 +65,7 @@ object Theme{
                 labelSmall = Typography.labelSmall,
             ),
             shapes = shapes,
-        ){
+        ) {
             CompositionLocalProvider(
                 LocalOverscrollConfiguration provides null,
                 content = content
@@ -146,7 +141,7 @@ object Theme{
     )
 
 
-    object ColorPalette{
+    object ColorPalette {
 
         val metal = Color(0xFF828DA9)
 
@@ -230,9 +225,9 @@ object Theme{
 
         val seed = Color(0xFF4C6793)
 
-        fun getColorByNumber( number : Int ) : Color {
+        fun getColorByNumber(number: Int): Color {
 
-            return when(number){
+            return when (number) {
                 0 -> metal
                 1 -> lightGreen
                 2 -> lightBlue

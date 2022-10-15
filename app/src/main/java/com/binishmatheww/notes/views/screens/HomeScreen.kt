@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,6 +22,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -33,6 +35,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import com.binishmatheww.notes.R
 import com.binishmatheww.notes.core.Theme
+import com.binishmatheww.notes.core.utilities.log
+import com.binishmatheww.notes.core.utilities.networkManagers.ConnectivityObserver
 import com.binishmatheww.notes.core.utilities.noRippleClickable
 import com.binishmatheww.notes.core.utilities.observeAsSate
 import com.binishmatheww.notes.core.utilities.onSwipe
@@ -40,6 +44,7 @@ import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.viewModels.HomeViewModel
 import com.binishmatheww.notes.views.composables.AddNoteDialog
 import com.binishmatheww.notes.views.composables.TextInputField
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -50,9 +55,29 @@ fun HomeScreen(
 
     Theme.NotesTheme {
 
+        val networkStatus by homeViewModel.networkConnectivityObserver.observe().collectAsState(
+            initial = ConnectivityObserver.Status.UnSpecified
+        )
+
+        log { networkStatus.name }
+
+        val systemUiController = rememberSystemUiController()
+
+        systemUiController.setStatusBarColor(
+            color = if (
+                networkStatus == ConnectivityObserver.Status.Lost
+                || networkStatus == ConnectivityObserver.Status.Unavailable
+            ) {
+                Theme.ColorPalette.md_theme_light_error
+            } else {
+                MaterialTheme.colorScheme.background
+            },
+            darkIcons = !isSystemInDarkTheme()
+        )
+
         val context = LocalContext.current
 
-        val lifeCycleState = LocalLifecycleOwner.current.lifecycle.observeAsSate().value
+        val lifeCycleState by LocalLifecycleOwner.current.lifecycle.observeAsSate()
 
         val openAddNoteDialog = remember { mutableStateOf(false) }
 
