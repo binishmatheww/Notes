@@ -20,13 +20,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.input.pointer.consumePositionChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.util.VelocityTracker
@@ -40,7 +37,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -94,65 +90,74 @@ fun Lifecycle.observeAsSate(): State<Lifecycle.Event> {
 
 //https://github.com/Ahmed-Sellami/List-Animations-In-Compose/blob/swipe-to-delete/app/src/main/java/com/example/listanimationsincompose/ui/SwipeToDelete.kt
 fun Modifier.onSwipe(
+    key : Any? = Unit,
     onSwipeRight: () -> Boolean,
     onSwipeLeft: () -> Boolean
 ): Modifier = composed {
 
     val offsetX = remember { Animatable(0f) }
 
-    val maximumWidth = with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.toPx() }
+    LaunchedEffect(
+        key1 = key,
+        block = {
+            log { "key changed : $key" }
+            offsetX.animateTo(targetValue = 0f, initialVelocity = 0f)
+        }
+    )
+
+    val threshold = with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.toPx() } * 0.6f
 
     pointerInput(Unit) {
-        // Used to calculate a settling position of a fling animation.
+
         val decay = splineBasedDecay<Float>(this)
-        // Wrap in a coroutine scope to use suspend functions for touch events and animation.
+
         coroutineScope {
             while (true) {
-                // Wait for a touch down event.
+
                 val pointerId = awaitPointerEventScope { awaitFirstDown().id }
-                // Interrupt any ongoing animation of other items.
+
                 offsetX.stop()
-                // Prepare for drag events and record velocity of a fling.
+
                 val velocityTracker = VelocityTracker()
-                // Wait for drag events.
+
                 awaitPointerEventScope {
+
                     horizontalDrag(pointerId) { change ->
 
                         val horizontalDragOffset = offsetX.value + change.positionChange().x
+
                         launch {
                             offsetX.snapTo(horizontalDragOffset)
                         }
-                        // Record the velocity of the drag.
+
                         velocityTracker.addPosition(change.uptimeMillis, change.position)
 
                     // Consume the gesture event, not passed to external
                     //if (change.positionChange() != Offset.Zero) change.consume()
 
                     }
+
                 }
-                // Dragging finished. Calculate the velocity of the fling.
-                var velocity = velocityTracker.calculateVelocity().x
-                // Calculate the eventual position where the fling should settle
-                // based on the current offset value and velocity
+
+                val velocity = velocityTracker.calculateVelocity().x
+
                 val targetOffsetX = decay.calculateTargetValue(offsetX.value, velocity)
-                // Set the upper and lower bounds so that the animation stops when it
-                // reaches the edge.
+
                 offsetX.updateBounds(
                     lowerBound = (-size.width.toFloat()),
                     upperBound = size.width.toFloat()
                 )
+
                 launch {
 
-                    //  Slide back the element if the settling position does not go beyond
-                    //  the size of the element. Remove the element if it does.
-                    if (targetOffsetX.absoluteValue <= maximumWidth) {
-                        // Not enough velocity; Slide back.
+
+                    if (targetOffsetX.absoluteValue <= threshold) {
                         offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
                     }
                     else {
-                        // Enough velocity to slide away the element to the edge.
+
                         offsetX.animateDecay(
-                            // If the velocity is low, we create a fake velocity to make the animation look smoother
+
                             when (velocity) {
                                 in 0f..500f -> {
                                     3000f
@@ -166,7 +171,7 @@ fun Modifier.onSwipe(
                             },
                             decay
                         )
-                        // The element was swiped away.
+
                         if(velocity >= 0){
                             if(!onSwipeRight.invoke()){
                                 offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
@@ -177,6 +182,7 @@ fun Modifier.onSwipe(
                                 offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
                             }
                         }
+
                     }
 
                 }
@@ -184,7 +190,6 @@ fun Modifier.onSwipe(
         }
     }
         .offset {
-            // Use the animating offset value here.
             IntOffset(offsetX.value.toInt(), 0)
         }
 
@@ -249,36 +254,28 @@ private fun Ring(
             .offset(y = (offset.value).dp)
             .graphicsLayer { rotationX = 0f }
     ) {
-        drawRing(strokeWidth)
-        drawText("The notes")
-    }
-}
 
-private fun DrawScope.drawRing(strokeWidth: Float) {
-    drawArc(
-        color = Color.Black,
-        startAngle = 0f,
-        sweepAngle = 360f,
-        useCenter = true,
-        style = Stroke(strokeWidth)
-    )
-}
-
-private fun DrawScope.drawText(text : String ) {
-
-    drawContext.canvas.nativeCanvas.apply {
-        drawText(
-            text,
-            size.width / 2,
-            size.height / 2,
-            Paint().apply {
-                textSize = 100F
-                color = android.graphics.Color.BLUE
-                textAlign = Paint.Align.CENTER
-            }
+        drawArc(
+            color = Color.Black,
+            startAngle = 0f,
+            sweepAngle = 360f,
+            useCenter = true,
+            style = Stroke(strokeWidth)
         )
-    }
 
+        drawContext.canvas.nativeCanvas.apply {
+            drawText(
+                "The notes",
+                this@Canvas.size.width / 2,
+                this@Canvas.size.height / 2,
+                Paint().apply {
+                    textSize = 100F
+                    color = android.graphics.Color.BLUE
+                    textAlign = Paint.Align.CENTER
+                }
+            )
+        }
+    }
 }
 
 private val infiniteLoopFlow: Flow<Int> = flow {
