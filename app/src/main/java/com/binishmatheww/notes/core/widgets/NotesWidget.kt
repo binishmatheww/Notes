@@ -1,5 +1,8 @@
 package com.binishmatheww.notes.core.widgets
 
+import android.appwidget.AppWidgetManager
+import android.content.Context
+import android.content.Intent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -9,23 +12,29 @@ import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
 import androidx.glance.action.Action
 import androidx.glance.action.actionStartActivity
-import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.GlanceAppWidgetReceiver
-import androidx.glance.appwidget.background
+import androidx.glance.appwidget.*
+import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.background
 import androidx.glance.layout.padding
+import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.glance.text.*
 import androidx.glance.unit.ColorProvider
 import com.binishmatheww.notes.R
 import com.binishmatheww.notes.core.themes.WidgetTheme
+import com.binishmatheww.notes.viewModels.HomeViewModel
 import com.binishmatheww.notes.views.LauncherActivity
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class NotesWidget : GlanceAppWidget() {
 
     @Composable
     override fun Content() {
 
-        WidgetTheme.NotesTheme() {
+        WidgetTheme.NotesTheme {
 
             val context = LocalContext.current
 
@@ -51,8 +60,4 @@ class NotesWidget : GlanceAppWidget() {
 
     private fun actionLaunchActivity(): Action = actionStartActivity(LauncherActivity::class.java)
 
-}
-
-class NotesWidgetReceiver : GlanceAppWidgetReceiver() {
-    override val glanceAppWidget: GlanceAppWidget = NotesWidget()
 }
