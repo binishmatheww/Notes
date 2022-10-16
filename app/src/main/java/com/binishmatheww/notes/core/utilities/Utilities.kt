@@ -94,13 +94,11 @@ fun Modifier.onSwipe(
     onSwipeLeft: () -> Boolean
 ): Modifier = composed {
 
-    val key = remember { mutableStateOf(System.currentTimeMillis()) }
-
     val offsetX = remember { Animatable(0f) }
 
     val threshold = with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.toPx() } * 0.6f
 
-    pointerInput(key) {
+    pointerInput(this) {
 
         val decay = splineBasedDecay<Float>(this)
 
@@ -164,7 +162,6 @@ fun Modifier.onSwipe(
 
                         if(velocity >= 0){
                             if(!onSwipeRight.invoke()){
-                                key.value = System.currentTimeMillis()
                                 offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
                             }else{
                                 offsetX.snapTo(0f)
@@ -172,7 +169,6 @@ fun Modifier.onSwipe(
                         }
                         else{
                             if (!onSwipeLeft.invoke()){
-                                key.value = System.currentTimeMillis()
                                 offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
                             }else{
                                 offsetX.snapTo(0f)
