@@ -90,18 +90,17 @@ fun Lifecycle.observeAsSate(): State<Lifecycle.Event> {
 
 //https://github.com/Ahmed-Sellami/List-Animations-In-Compose/blob/swipe-to-delete/app/src/main/java/com/example/listanimationsincompose/ui/SwipeToDelete.kt
 fun Modifier.onSwipe(
-    key : Any? =null,
     onSwipeRight: () -> Boolean,
     onSwipeLeft: () -> Boolean
 ): Modifier = composed {
 
-    val isSwiped = remember { mutableStateOf(System.currentTimeMillis()) }
+    val key = remember { mutableStateOf(System.currentTimeMillis()) }
 
     val offsetX = remember { Animatable(0f) }
 
     val threshold = with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.toPx() } * 0.6f
 
-    pointerInput(isSwiped) {
+    pointerInput(key) {
 
         val decay = splineBasedDecay<Float>(this)
 
@@ -143,8 +142,6 @@ fun Modifier.onSwipe(
 
                 launch {
 
-                    log { "Swiping : $key" }
-
                     if (targetOffsetX.absoluteValue <= threshold) {
                         offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
                     }
@@ -167,7 +164,7 @@ fun Modifier.onSwipe(
 
                         if(velocity >= 0){
                             if(!onSwipeRight.invoke()){
-                                isSwiped.value = System.currentTimeMillis()
+                                key.value = System.currentTimeMillis()
                                 offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
                             }else{
                                 offsetX.snapTo(0f)
@@ -175,7 +172,7 @@ fun Modifier.onSwipe(
                         }
                         else{
                             if (!onSwipeLeft.invoke()){
-                                isSwiped.value = System.currentTimeMillis()
+                                key.value = System.currentTimeMillis()
                                 offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
                             }else{
                                 offsetX.snapTo(0f)
