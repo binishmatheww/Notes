@@ -98,7 +98,7 @@ fun Modifier.onSwipe(
 
     val threshold = with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.toPx() } * 0.6f
 
-    pointerInput(this) {
+    pointerInput(System.currentTimeMillis()) {
 
         val decay = splineBasedDecay<Float>(this)
 
