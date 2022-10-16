@@ -90,18 +90,18 @@ fun Lifecycle.observeAsSate(): State<Lifecycle.Event> {
 
 //https://github.com/Ahmed-Sellami/List-Animations-In-Compose/blob/swipe-to-delete/app/src/main/java/com/example/listanimationsincompose/ui/SwipeToDelete.kt
 fun Modifier.onSwipe(
-    key : Any? = Unit,
     onSwipeRight: () -> Boolean,
     onSwipeLeft: () -> Boolean
 ): Modifier = composed {
 
+    val isSwiped = remember { mutableStateOf(false) }
+
     val offsetX = remember { Animatable(0f) }
 
     LaunchedEffect(
-        key1 = key,
+        key1 = isSwiped,
         block = {
-            log { "key changed : $key" }
-            offsetX.animateTo(targetValue = 0f, initialVelocity = 0f)
+            offsetX.animateTo(targetValue = 0f)
         }
     )
 
@@ -132,8 +132,7 @@ fun Modifier.onSwipe(
 
                         velocityTracker.addPosition(change.uptimeMillis, change.position)
 
-                    // Consume the gesture event, not passed to external
-                    //if (change.positionChange() != Offset.Zero) change.consume()
+                        if ( horizontalDragOffset > 50f ) change.consume()
 
                     }
 
@@ -157,7 +156,6 @@ fun Modifier.onSwipe(
                     else {
 
                         offsetX.animateDecay(
-
                             when (velocity) {
                                 in 0f..500f -> {
                                     3000f
@@ -176,10 +174,18 @@ fun Modifier.onSwipe(
                             if(!onSwipeRight.invoke()){
                                 offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
                             }
+                            else{
+                                delay(1000)
+                                isSwiped.value = true
+                            }
                         }
                         else{
                             if (!onSwipeLeft.invoke()){
                                 offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
+                            }
+                            else{
+                                delay(1000)
+                                isSwiped.value = true
                             }
                         }
 
