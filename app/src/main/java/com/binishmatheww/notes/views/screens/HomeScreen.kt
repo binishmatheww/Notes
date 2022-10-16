@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.binishmatheww.notes.R
 import com.binishmatheww.notes.core.Theme
 import com.binishmatheww.notes.core.utilities.networkManagers.ConnectivityObserver
@@ -41,6 +43,7 @@ import com.binishmatheww.notes.views.composables.NotePreviewCard
 import com.binishmatheww.notes.views.composables.TextInputField
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun HomeScreen(
     homeViewModel : HomeViewModel = hiltViewModel(),
@@ -115,7 +118,7 @@ fun HomeScreen(
                     .fillMaxHeight(0.9f)
             ) {
 
-                val notes by homeViewModel.getNotes().collectAsState(initial = arrayListOf())
+                val notes by homeViewModel.getNotes().collectAsStateWithLifecycle(initialValue = arrayListOf())
 
                 if(notes.isEmpty()){
 
@@ -181,10 +184,10 @@ fun HomeScreen(
                                 noteTitle = note.title,
                                 onNoteClick = {
                                     openAddNoteDialog.value = false
-                                    onNoteClick.invoke(note.id)
+                                    onNoteClick.invoke(it)
                                 },
                                 onNoteDelete = {
-                                    homeViewModel.deleteNoteById(note.id)
+                                    homeViewModel.deleteNoteById(it)
                                     Toast
                                         .makeText(
                                             context,

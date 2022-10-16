@@ -94,16 +94,7 @@ fun Modifier.onSwipe(
     onSwipeLeft: () -> Boolean
 ): Modifier = composed {
 
-    val isSwiped = remember { mutableStateOf(false) }
-
     val offsetX = remember { Animatable(0f) }
-
-    LaunchedEffect(
-        key1 = isSwiped,
-        block = {
-            offsetX.animateTo(targetValue = 0f)
-        }
-    )
 
     val threshold = with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.toPx() } * 0.6f
 
@@ -174,18 +165,10 @@ fun Modifier.onSwipe(
                             if(!onSwipeRight.invoke()){
                                 offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
                             }
-                            else{
-                                delay(1000)
-                                isSwiped.value = true
-                            }
                         }
                         else{
                             if (!onSwipeLeft.invoke()){
                                 offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
-                            }
-                            else{
-                                delay(1000)
-                                isSwiped.value = true
                             }
                         }
 

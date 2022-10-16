@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.binishmatheww.notes.R
 import com.binishmatheww.notes.core.Theme
 import com.binishmatheww.notes.core.utilities.log
@@ -29,6 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun NoteDetailsScreen(
     noteId : Long,
@@ -51,7 +54,7 @@ fun NoteDetailsScreen(
                     .verticalScroll(verticalScrollState)
             ){
 
-                val note by noteDetailsViewModel.getNoteById(noteId).collectAsState(initial = null)
+                val note by noteDetailsViewModel.getNoteById(noteId).collectAsStateWithLifecycle(initialValue = null)
 
                 var title by remember { mutableStateOf("") }
 
