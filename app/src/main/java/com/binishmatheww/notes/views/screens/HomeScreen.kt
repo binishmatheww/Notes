@@ -68,13 +68,7 @@ fun HomeScreen(
 
         val context = LocalContext.current
 
-        val lifeCycleState by LocalLifecycleOwner.current.lifecycle.observeAsSate()
-
         val openAddNoteDialog = remember { mutableStateOf(false) }
-
-        if (lifeCycleState == Lifecycle.Event.ON_PAUSE) {
-            openAddNoteDialog.value = false
-        }
 
         Column(
             modifier = Modifier
