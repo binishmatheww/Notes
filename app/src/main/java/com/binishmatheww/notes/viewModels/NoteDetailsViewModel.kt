@@ -14,14 +14,8 @@ import javax.inject.Inject
 @HiltViewModel
 class NoteDetailsViewModel @Inject constructor(private val noteRepository: NoteRepository) : ViewModel() {
 
-    fun getNoteById( id : Long ) : Flow<Note?> {
+    fun getNoteById( id : Long ) = noteRepository.getNoteById(id = id)
 
-        return noteRepository.getNoteById(
-            id = id
-        )
-
-    }
-
-    fun addNote( note: Note ) = CoroutineScope(Dispatchers.IO).launch { noteRepository.addNote(note) }
+    fun addNote( note: Note ) = viewModelScope.launch { noteRepository.addNote(note) }
 
 }
