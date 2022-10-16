@@ -46,8 +46,8 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun HomeScreen(
-    homeViewModel : HomeViewModel = hiltViewModel(),
-    onNoteClick : (Long) -> Unit,
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    onNoteClick: (Long) -> Unit,
 ) {
 
     Theme.NotesTheme {
@@ -59,15 +59,11 @@ fun HomeScreen(
         val systemUiController = rememberSystemUiController()
 
         systemUiController.setStatusBarColor(
-            color = if (
-                networkStatus == ConnectivityObserver.Status.Lost
-                || networkStatus == ConnectivityObserver.Status.Unavailable
-            ) {
+            color = if (networkStatus == ConnectivityObserver.Status.Lost || networkStatus == ConnectivityObserver.Status.Unavailable) {
                 Theme.ColorPalette.md_theme_light_error
             } else {
                 MaterialTheme.colorScheme.background
-            },
-            darkIcons = !isSystemInDarkTheme()
+            }, darkIcons = !isSystemInDarkTheme()
         )
 
         val context = LocalContext.current
@@ -76,7 +72,7 @@ fun HomeScreen(
 
         val openAddNoteDialog = remember { mutableStateOf(false) }
 
-        if ( lifeCycleState == Lifecycle.Event.ON_PAUSE ) {
+        if (lifeCycleState == Lifecycle.Event.ON_PAUSE) {
             openAddNoteDialog.value = false
         }
 
@@ -102,8 +98,7 @@ fun HomeScreen(
                         .wrapContentHeight()
                         .wrapContentWidth(),
                     style = MaterialTheme.typography.headlineLarge.copy(
-                        color = MaterialTheme.colorScheme.primary,
-                        shadow = Shadow(
+                        color = MaterialTheme.colorScheme.primary, shadow = Shadow(
                             color = MaterialTheme.colorScheme.primaryContainer,
                             offset = Offset(4.0f, 8.0f),
                             blurRadius = 3f
@@ -114,13 +109,13 @@ fun HomeScreen(
             }
 
             Row(
-                modifier = Modifier
-                    .fillMaxHeight(0.9f)
+                modifier = Modifier.fillMaxHeight(0.9f)
             ) {
 
-                val notes by homeViewModel.getNotes().collectAsStateWithLifecycle(initialValue = arrayListOf())
+                val notes by homeViewModel.getNotes()
+                    .collectAsStateWithLifecycle(initialValue = arrayListOf())
 
-                if(notes.isEmpty()){
+                if (notes.isEmpty()) {
 
                     Box(
                         modifier = Modifier
@@ -136,8 +131,7 @@ fun HomeScreen(
                                 .align(Alignment.Center)
                                 .noRippleClickable {
                                     openAddNoteDialog.value = true
-                                },
-                            horizontalAlignment = Alignment.CenterHorizontally
+                                }, horizontalAlignment = Alignment.CenterHorizontally
                         ) {
 
                             Image(
@@ -151,9 +145,9 @@ fun HomeScreen(
                             Spacer(modifier = Modifier.height(12.dp))
 
                             Text(
-                                text = if (homeViewModel.searchQuery.isBlank()) context.getString(R.string.addNotesAndTheyWillBeShownHere) else context.getString(R.string.nothingMatchesYourQuery),
-                                textAlign = TextAlign.Center,
-                                style = TextStyle(
+                                text = if (homeViewModel.searchQuery.isBlank()) context.getString(R.string.addNotesAndTheyWillBeShownHere) else context.getString(
+                                    R.string.nothingMatchesYourQuery
+                                ), textAlign = TextAlign.Center, style = TextStyle(
                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                                     fontSize = 16.sp
                                 )
@@ -163,8 +157,7 @@ fun HomeScreen(
 
                     }
 
-                }
-                else{
+                } else {
 
                     LazyColumn(
                         modifier = Modifier
@@ -173,12 +166,11 @@ fun HomeScreen(
                         contentPadding = PaddingValues(16.dp)
                     ) {
 
-                        items(notes){ note ->
+                        items(notes) { note ->
 
-                            NotePreviewCard(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(2.dp),
+                            NotePreviewCard(modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(2.dp),
                                 noteId = note.id,
                                 noteColorId = note.colorId,
                                 noteTitle = note.title,
@@ -188,15 +180,12 @@ fun HomeScreen(
                                 },
                                 onNoteDelete = {
                                     homeViewModel.deleteNoteById(it)
-                                    Toast
-                                        .makeText(
+                                    Toast.makeText(
                                             context,
                                             context.getText(R.string.deletedTheNote),
                                             Toast.LENGTH_SHORT
-                                        )
-                                        .show()
-                                }
-                            )
+                                        ).show()
+                                })
 
                         }
 
@@ -212,36 +201,33 @@ fun HomeScreen(
                     .background(MaterialTheme.colorScheme.background)
                     .requiredHeight(100.dp)
                     .padding(
-                        start = 10.dp,
-                        end = 10.dp
+                        start = 10.dp, end = 10.dp
                     ),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                TextInputField(
-                    modifier = Modifier
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = MaterialTheme.shapes.large
-                        )
-                        .requiredHeight(50.dp)
-                        .fillMaxWidth()
-                        .weight(
-                            weight = 7.5f
-                        ),
+                TextInputField(modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = MaterialTheme.shapes.large
+                    )
+                    .requiredHeight(50.dp)
+                    .fillMaxWidth()
+                    .weight(
+                        weight = 7.5f
+                    ),
                     text = homeViewModel.searchQuery,
                     onValueChange = {
                         homeViewModel.searchQuery = it
                     },
                     imeAction = ImeAction.Done,
                     maxLines = 1,
-                    textStyle = MaterialTheme.typography.labelLarge.copy( color = MaterialTheme.colorScheme.onPrimary ),
+                    textStyle = MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onPrimary),
                     placeHolderTitle = context.getString(R.string.searchHere),
                     onDoneClick = {
 
-                    }
-                )
+                    })
 
                 Spacer(
                     modifier = Modifier
@@ -263,12 +249,11 @@ fun HomeScreen(
                         )
                         .clickable(onClick = {
                             openAddNoteDialog.value = true
-                        }),
-                    contentAlignment = Alignment.Center
-                ){
+                        }), contentAlignment = Alignment.Center
+                ) {
                     Icon(
                         imageVector = Icons.Outlined.Add,
-                        tint= MaterialTheme.colorScheme.onPrimary,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         contentDescription = null,
                         modifier = Modifier
                             .padding(4.dp)
@@ -282,10 +267,9 @@ fun HomeScreen(
 
         if (openAddNoteDialog.value) {
 
-            AddNoteDialog(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background),
+            AddNoteDialog(modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background),
                 onDismiss = {
                     openAddNoteDialog.value = false
                 },
@@ -296,23 +280,16 @@ fun HomeScreen(
                     val id = System.currentTimeMillis()
 
                     val note = Note(
-                        id,
-                        title,
-                        description,
-                        (0..5).random(),
-                        id
+                        id, title, description, (0..5).random(), id
                     )
 
                     homeViewModel.addNote(note)
 
                     Toast.makeText(
-                        context,
-                        context.getText(R.string.savedTheNote),
-                        Toast.LENGTH_SHORT
+                        context, context.getText(R.string.savedTheNote), Toast.LENGTH_SHORT
                     ).show()
 
-                }
-            )
+                })
 
         }
 

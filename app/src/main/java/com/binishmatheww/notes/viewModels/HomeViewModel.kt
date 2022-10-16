@@ -41,8 +41,8 @@ class HomeViewModel
 
     fun getNotes() = noteRepository.getNotesByQuery(searchQuery = searchQuery)
 
-    fun addNote( note : Note ) = CoroutineScope(Dispatchers.IO).launch { noteRepository.addNote(note) }
+    fun addNote( note : Note ) = viewModelScope.launch { noteRepository.addNote(note) }
 
-    fun deleteNoteById( id : Long ) = CoroutineScope(Dispatchers.IO).launch { noteRepository.deleteNoteById(id) }
+    fun deleteNoteById( id : Long ) = viewModelScope.launch { noteRepository.deleteNoteById(id) }
 
 }

@@ -7,8 +7,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.binishmatheww.notes.core.constants.Routes
 import com.binishmatheww.notes.views.screens.HomeScreen
 import com.binishmatheww.notes.views.screens.NoteDetailsScreen
@@ -67,7 +67,7 @@ class LauncherActivity : AppCompatActivity() {
                     route = Routes.noteDetailsScreen.plus("/{id}"),
                     arguments = listOf(
                         navArgument("id"){
-                            type = NavType.LongType
+                            this.type = NavType.LongType
                         }
                     )
                 ){ backStackEntry ->
