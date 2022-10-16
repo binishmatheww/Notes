@@ -42,6 +42,7 @@ fun NotePreviewCard(
                 onNoteClick.invoke(noteId)
             }
             .onSwipe(
+                key = noteTitle,
                 onSwipeLeft = {
                     onNoteDelete.invoke(noteId)
                     true

@@ -90,6 +90,7 @@ fun Lifecycle.observeAsSate(): State<Lifecycle.Event> {
 
 //https://github.com/Ahmed-Sellami/List-Animations-In-Compose/blob/swipe-to-delete/app/src/main/java/com/example/listanimationsincompose/ui/SwipeToDelete.kt
 fun Modifier.onSwipe(
+    key : Any? =null,
     onSwipeRight: () -> Boolean,
     onSwipeLeft: () -> Boolean
 ): Modifier = composed {
@@ -140,6 +141,7 @@ fun Modifier.onSwipe(
 
                 launch {
 
+                    log { "Swiping : $key" }
 
                     if (targetOffsetX.absoluteValue <= threshold) {
                         offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
