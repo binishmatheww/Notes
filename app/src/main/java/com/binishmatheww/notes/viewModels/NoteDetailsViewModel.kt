@@ -2,6 +2,7 @@ package com.binishmatheww.notes.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.binishmatheww.notes.core.utilities.networkManagers.ConnectivityObserver
 import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.models.repositories.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +13,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NoteDetailsViewModel @Inject constructor(private val noteRepository: NoteRepository) : ViewModel() {
+class NoteDetailsViewModel
+@Inject constructor(
+    private val noteRepository: NoteRepository,
+    val networkConnectivityObserver: ConnectivityObserver,
+    ) : ViewModel() {
 
     fun getNoteById( id : Long ) = noteRepository.getNoteById(id = id)
 

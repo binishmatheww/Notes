@@ -1,6 +1,8 @@
 package com.binishmatheww.notes.core
 
 import android.app.Application
+import com.binishmatheww.notes.core.utilities.networkManagers.ConnectivityObserver
+import com.binishmatheww.notes.core.utilities.networkManagers.NetworkConnectivityObserver
 import com.binishmatheww.notes.models.databases.NoteDatabase
 import com.binishmatheww.notes.models.repositories.NoteRepository
 import dagger.Module
@@ -24,6 +26,12 @@ object NotesInjector {
     @Singleton
     fun provideNoteRepository( noteDatabase: NoteDatabase ): NoteRepository {
         return NoteRepository(noteDatabase)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNetworkConnectivityObserver( app: Application ): ConnectivityObserver {
+        return NetworkConnectivityObserver(app)
     }
 
 }

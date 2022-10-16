@@ -24,20 +24,11 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel
 @Inject constructor(
-    @ApplicationContext context : Context,
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
+    val networkConnectivityObserver: ConnectivityObserver,
     ) : ViewModel() {
 
     var searchQuery by mutableStateOf("")
-
-    var networkConnectivityObserver : ConnectivityObserver
-    private set
-
-    init {
-
-        networkConnectivityObserver = NetworkConnectivityObserver(context)
-
-    }
 
     fun getNotes() = noteRepository.getNotesByQuery(searchQuery = searchQuery)
 

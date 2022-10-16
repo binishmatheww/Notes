@@ -3,6 +3,7 @@ package com.binishmatheww.notes.views.screens
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -22,10 +23,11 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.binishmatheww.notes.R
 import com.binishmatheww.notes.core.Theme
-import com.binishmatheww.notes.core.utilities.log
+import com.binishmatheww.notes.core.utilities.networkManagers.ConnectivityObserver
 import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.viewModels.NoteDetailsViewModel
 import com.binishmatheww.notes.views.composables.TextInputField
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -35,11 +37,25 @@ import kotlinx.coroutines.withContext
 @Composable
 fun NoteDetailsScreen(
     noteId : Long,
-    noteDetailsViewModel : NoteDetailsViewModel = hiltViewModel(),
+    viewModel : NoteDetailsViewModel = hiltViewModel(),
     onNoteSaved : () -> Unit
 ){
 
     Theme.NotesTheme {
+
+        val networkStatus by viewModel.networkConnectivityObserver.observe().collectAsState(
+            initial = ConnectivityObserver.Status.UnSpecified
+        )
+
+        val systemUiController = rememberSystemUiController()
+
+        systemUiController.setStatusBarColor(
+            color = if (networkStatus == ConnectivityObserver.Status.Lost || networkStatus == ConnectivityObserver.Status.Unavailable) {
+                Theme.ColorPalette.md_theme_light_error
+            } else {
+                MaterialTheme.colorScheme.background
+            }, darkIcons = !isSystemInDarkTheme()
+        )
 
         val verticalScrollState = rememberScrollState()
 
@@ -54,7 +70,7 @@ fun NoteDetailsScreen(
                     .verticalScroll(verticalScrollState)
             ){
 
-                val note by noteDetailsViewModel.getNoteById(noteId).collectAsStateWithLifecycle(initialValue = null)
+                val note by viewModel.getNoteById(noteId).collectAsStateWithLifecycle(initialValue = null)
 
                 var title by remember { mutableStateOf("") }
 
@@ -106,7 +122,7 @@ fun NoteDetailsScreen(
                     enabled = title.isNotBlank() && (title != note?.title || description != note?.description),
                     onClick = {
 
-                        noteDetailsViewModel.addNote(
+                        viewModel.addNote(
                             Note(
                                 id = noteId,
                                 title = title,

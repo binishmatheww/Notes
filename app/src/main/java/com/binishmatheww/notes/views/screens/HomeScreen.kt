@@ -46,13 +46,13 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     onNoteClick: (Long) -> Unit,
 ) {
 
     Theme.NotesTheme {
 
-        val networkStatus by homeViewModel.networkConnectivityObserver.observe().collectAsState(
+        val networkStatus by viewModel.networkConnectivityObserver.observe().collectAsState(
             initial = ConnectivityObserver.Status.UnSpecified
         )
 
@@ -112,7 +112,7 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxHeight(0.9f)
             ) {
 
-                val notes by homeViewModel.getNotes()
+                val notes by viewModel.getNotes()
                     .collectAsStateWithLifecycle(initialValue = arrayListOf())
 
                 if (notes.isEmpty()) {
@@ -145,7 +145,7 @@ fun HomeScreen(
                             Spacer(modifier = Modifier.height(12.dp))
 
                             Text(
-                                text = if (homeViewModel.searchQuery.isBlank()) context.getString(R.string.addNotesAndTheyWillBeShownHere) else context.getString(
+                                text = if (viewModel.searchQuery.isBlank()) context.getString(R.string.addNotesAndTheyWillBeShownHere) else context.getString(
                                     R.string.nothingMatchesYourQuery
                                 ), textAlign = TextAlign.Center, style = TextStyle(
                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -179,7 +179,7 @@ fun HomeScreen(
                                     onNoteClick.invoke(it)
                                 },
                                 onNoteDelete = {
-                                    homeViewModel.deleteNoteById(it)
+                                    viewModel.deleteNoteById(it)
                                     Toast.makeText(
                                             context,
                                             context.getText(R.string.deletedTheNote),
@@ -217,9 +217,9 @@ fun HomeScreen(
                     .weight(
                         weight = 7.5f
                     ),
-                    text = homeViewModel.searchQuery,
+                    text = viewModel.searchQuery,
                     onValueChange = {
-                        homeViewModel.searchQuery = it
+                        viewModel.searchQuery = it
                     },
                     imeAction = ImeAction.Done,
                     maxLines = 1,
@@ -283,7 +283,7 @@ fun HomeScreen(
                         id, title, description, (0..5).random(), id
                     )
 
-                    homeViewModel.addNote(note)
+                    viewModel.addNote(note)
 
                     Toast.makeText(
                         context, context.getText(R.string.savedTheNote), Toast.LENGTH_SHORT
