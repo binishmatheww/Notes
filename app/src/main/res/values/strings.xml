@@ -14,5 +14,7 @@
     <string name="save">Save</string>
     <string name="deletedTheNote">Deleted the note</string>
     <string name="addedAt">Added at :</string>
+    <string name="notesWidgetTitle">Notes widget</string>
+    <string name="notesWidgetDescription">See your notes on the home screen.</string>
 
 </resources>

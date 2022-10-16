@@ -14,4 +14,6 @@
     <string name="save">"സേവ്"</string>
     <string name="deletedTheNote">"നോട്ട് ഡിലീറ്റ് ചെയ്തു "</string>
     <string name="addedAt">ആഡ് ചെയ്തത്  :</string>
+    <string name="notesWidgetTitle">Notes widget</string>
+    <string name="notesWidgetDescription">See your notes on the home screen.</string>
 </resources>
