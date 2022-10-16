@@ -164,11 +164,15 @@ fun Modifier.onSwipe(
                         if(velocity >= 0){
                             if(!onSwipeRight.invoke()){
                                 offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
+                            }else{
+                                offsetX.snapTo(0f)
                             }
                         }
                         else{
                             if (!onSwipeLeft.invoke()){
                                 offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
+                            }else{
+                                offsetX.snapTo(0f)
                             }
                         }
 
