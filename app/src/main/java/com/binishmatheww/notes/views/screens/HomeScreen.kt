@@ -20,7 +20,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -28,14 +27,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.binishmatheww.notes.R
-import com.binishmatheww.notes.core.Theme
+import com.binishmatheww.notes.core.themes.AppTheme
+import com.binishmatheww.notes.core.themes.ColorPalette
 import com.binishmatheww.notes.core.utilities.networkManagers.ConnectivityObserver
 import com.binishmatheww.notes.core.utilities.noRippleClickable
-import com.binishmatheww.notes.core.utilities.observeAsSate
 import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.viewModels.HomeViewModel
 import com.binishmatheww.notes.views.composables.AddNoteDialog
@@ -50,7 +48,7 @@ fun HomeScreen(
     onNoteClick: (Long) -> Unit,
 ) {
 
-    Theme.NotesTheme {
+    AppTheme.NotesTheme {
 
         val networkStatus by viewModel.networkConnectivityObserver.observe().collectAsState(
             initial = ConnectivityObserver.Status.UnSpecified
@@ -60,7 +58,7 @@ fun HomeScreen(
 
         systemUiController.setStatusBarColor(
             color = if (networkStatus == ConnectivityObserver.Status.Lost || networkStatus == ConnectivityObserver.Status.Unavailable) {
-                Theme.ColorPalette.md_theme_light_error
+                ColorPalette.md_theme_light_error
             } else {
                 MaterialTheme.colorScheme.background
             }, darkIcons = !isSystemInDarkTheme()

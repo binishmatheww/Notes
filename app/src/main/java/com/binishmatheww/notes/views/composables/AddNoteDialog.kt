@@ -13,12 +13,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.binishmatheww.notes.core.Theme
+import com.binishmatheww.notes.core.themes.AppTheme
 import com.binishmatheww.notes.R
 
 @Composable
@@ -28,7 +27,7 @@ fun AddNoteDialog(
     onSave: (String, String) -> Unit
 ) {
 
-    Theme.NotesTheme {
+    AppTheme.NotesTheme {
 
         val context = LocalContext.current
 

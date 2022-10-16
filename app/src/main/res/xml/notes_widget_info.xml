@@ -1,6 +1,7 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/notesWidgetDescription"
     android:initialLayout="@layout/notes_widget_initial_layout"
+    android:previewLayout="@layout/notes_widget_initial_layout"
     android:minWidth="@dimen/dp_126"
     android:minHeight="@dimen/dp_100"
     android:resizeMode="horizontal|vertical"

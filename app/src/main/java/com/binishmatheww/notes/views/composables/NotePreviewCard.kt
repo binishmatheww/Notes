@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.binishmatheww.notes.R
-import com.binishmatheww.notes.core.Theme
+import com.binishmatheww.notes.core.themes.ColorPalette
 import com.binishmatheww.notes.core.utilities.onSwipe
 import com.binishmatheww.notes.core.utilities.toDate
 
@@ -56,7 +56,7 @@ fun NotePreviewCard(
         ConstraintLayout(
             modifier = Modifier
                 .background(
-                    Theme.ColorPalette
+                    ColorPalette
                         .getColorByNumber(noteColorId)
                         .copy(alpha = 0.6f)
                 )

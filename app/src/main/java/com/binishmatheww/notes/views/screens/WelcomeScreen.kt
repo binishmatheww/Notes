@@ -16,12 +16,12 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import com.binishmatheww.notes.R
-import com.binishmatheww.notes.core.Theme
+import com.binishmatheww.notes.core.themes.AppTheme
 
 @Composable
 fun WelcomeScreen( onComplete : () -> Unit ) {
 
-    Theme.NotesTheme {
+    AppTheme.NotesTheme {
 
         val size = remember { Animatable(1f) }
 
