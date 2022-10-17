@@ -34,12 +34,14 @@ import com.binishmatheww.notes.core.themes.AppTheme
 import com.binishmatheww.notes.core.themes.ColorPalette
 import com.binishmatheww.notes.core.utilities.networkManagers.ConnectivityObserver
 import com.binishmatheww.notes.core.utilities.noRippleClickable
+import com.binishmatheww.notes.core.widgets.NotesWidget
 import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.viewModels.HomeViewModel
 import com.binishmatheww.notes.views.composables.AddNoteDialog
 import com.binishmatheww.notes.views.composables.NotePreviewCard
 import com.binishmatheww.notes.views.composables.TextInputField
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
@@ -65,6 +67,8 @@ fun HomeScreen(
         )
 
         val context = LocalContext.current
+
+        val scope = rememberCoroutineScope()
 
         val openAddNoteDialog = remember { mutableStateOf(false) }
 
@@ -280,6 +284,13 @@ fun HomeScreen(
                     Toast.makeText(
                         context, context.getText(R.string.savedTheNote), Toast.LENGTH_SHORT
                     ).show()
+
+                    scope.launch {
+                        NotesWidget.notifyNotesWidget(
+                            context = context,
+                            noteTitle = title
+                        )
+                    }
 
                 })
 
