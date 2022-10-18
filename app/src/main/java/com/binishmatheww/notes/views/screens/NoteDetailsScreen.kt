@@ -99,7 +99,7 @@ fun NoteDetailsScreen(
                     }
                 )
 
-                val ( noteSaveButtonConstraint, noteTitleConstraint, noteDescriptionConstraint ) = createRefs()
+                val ( noteTitleConstraint, noteDescriptionConstraint, noteSaveButtonConstraint ) = createRefs()
 
                 val alpha = remember { Animatable(0f) }
 
@@ -115,9 +115,54 @@ fun NoteDetailsScreen(
                     }
                 )
 
+
+                TextInputField(
+                    text = title,
+                    modifier = Modifier
+                        .constrainAs(noteTitleConstraint) {
+                            top.linkTo(parent.top, 16.dp)
+                            start.linkTo(parent.start, 16.dp)
+                            end.linkTo(parent.end, 16.dp)
+                            width = Dimension.fillToConstraints
+                        }
+                        .fillMaxWidth()
+                        .heightIn(
+                            min = 40.dp,
+                            max = 120.dp
+                        )
+                        .alpha(alpha.value),
+                    placeHolderTitle = LocalContext.current.getString(R.string.enterNoteTitle),
+                    textStyle = MaterialTheme.typography.headlineMedium.copy(color = MaterialTheme.colorScheme.primary),
+                    onValueChange = {
+                        title = it
+                    }
+                )
+
+                TextInputField(
+                    text = description,
+                    modifier = Modifier
+                        .constrainAs(noteDescriptionConstraint) {
+                            top.linkTo(noteTitleConstraint.bottom, 32.dp)
+                            start.linkTo(parent.start, 16.dp)
+                            end.linkTo(parent.end, 16.dp)
+                            width = Dimension.fillToConstraints
+                        }
+                        .fillMaxWidth()
+                        .heightIn(
+                            min = 40.dp,
+                            max = 120.dp
+                        )
+                        .alpha(alpha.value),
+                    placeHolderTitle = LocalContext.current.getString(R.string.enterNoteDescription),
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.primary),
+                    onValueChange = {
+                        description = it
+                    }
+                )
+
                 Button(
                     modifier = Modifier.constrainAs(noteSaveButtonConstraint) {
-                        top.linkTo(parent.top, 16.dp)
+                        bottom.linkTo(parent.bottom, 16.dp)
                         end.linkTo(parent.end, 16.dp)
                     },
                     enabled = title.isNotBlank() && (title != note?.title || description != note?.description),
@@ -142,42 +187,6 @@ fun NoteDetailsScreen(
                         style = MaterialTheme.typography.headlineSmall,
                     )
                 }
-
-                TextInputField(
-                    text = title,
-                    modifier = Modifier
-                        .constrainAs(noteTitleConstraint) {
-                            top.linkTo(noteSaveButtonConstraint.bottom, 64.dp)
-                            start.linkTo(parent.start, 16.dp)
-                            end.linkTo(parent.end, 16.dp)
-                            width = Dimension.fillToConstraints
-                        }
-                        .fillMaxWidth()
-                        .alpha(alpha.value),
-                    placeHolderTitle = LocalContext.current.getString(R.string.enterNoteTitle),
-                    textStyle = MaterialTheme.typography.headlineMedium.copy(color = MaterialTheme.colorScheme.primary),
-                    onValueChange = {
-                        title = it
-                    }
-                )
-
-                TextInputField(
-                    text = description,
-                    modifier = Modifier
-                        .constrainAs(noteDescriptionConstraint) {
-                            top.linkTo(noteTitleConstraint.bottom, 32.dp)
-                            start.linkTo(parent.start, 16.dp)
-                            end.linkTo(parent.end, 16.dp)
-                            width = Dimension.fillToConstraints
-                        }
-                        .fillMaxWidth()
-                        .alpha(alpha.value),
-                    placeHolderTitle = LocalContext.current.getString(R.string.enterNoteDescription),
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.primary),
-                    onValueChange = {
-                        description = it
-                    }
-                )
 
             }
 
