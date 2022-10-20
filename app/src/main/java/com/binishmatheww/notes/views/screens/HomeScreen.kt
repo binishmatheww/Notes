@@ -32,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.binishmatheww.notes.R
 import com.binishmatheww.notes.core.themes.AppTheme
 import com.binishmatheww.notes.core.themes.ColorPalette
+import com.binishmatheww.notes.core.utilities.collectAsStateWithLifecycleAndCallback
 import com.binishmatheww.notes.core.utilities.networkManagers.ConnectivityObserver
 import com.binishmatheww.notes.core.utilities.noRippleClickable
 import com.binishmatheww.notes.core.widgets.NotesWidget
@@ -41,7 +42,6 @@ import com.binishmatheww.notes.views.composables.AddNoteDialog
 import com.binishmatheww.notes.views.composables.NotePreviewCard
 import com.binishmatheww.notes.views.composables.TextInputField
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
@@ -52,8 +52,8 @@ fun HomeScreen(
 
     AppTheme.NotesTheme {
 
-        val networkStatus by viewModel.networkConnectivityObserver.observe().collectAsState(
-            initial = ConnectivityObserver.Status.UnSpecified
+        val networkStatus by viewModel.networkConnectivityObserver.observe().collectAsStateWithLifecycle(
+            initialValue = ConnectivityObserver.Status.UnSpecified
         )
 
         val systemUiController = rememberSystemUiController()
@@ -109,7 +109,16 @@ fun HomeScreen(
             ) {
 
                 val notes by viewModel.getNotes()
-                    .collectAsStateWithLifecycle(initialValue = arrayListOf())
+                    .collectAsStateWithLifecycleAndCallback(
+                        initialValue = arrayListOf(),
+                        callback = {
+
+                            NotesWidget.notifyNotesWidget(
+                                context = context,
+                                notes = it,
+                            )
+                        }
+                    )
 
                 if (notes.isEmpty()) {
 
@@ -284,13 +293,6 @@ fun HomeScreen(
                     Toast.makeText(
                         context, context.getText(R.string.savedTheNote), Toast.LENGTH_SHORT
                     ).show()
-
-                    scope.launch {
-                        NotesWidget.notifyNotesWidget(
-                            context = context,
-                            noteTitle = title
-                        )
-                    }
 
                 })
 
