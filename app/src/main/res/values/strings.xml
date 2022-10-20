@@ -17,4 +17,15 @@
     <string name="notesWidgetTitle">Notes widget</string>
     <string name="notesWidgetDescription">See your notes on the home screen.</string>
 
+    <string-array name="sampleNotes">
+        <item>Notes</item>
+        <item>added</item>
+        <item>by</item>
+        <item>you</item>
+        <item>will</item>
+        <item>be</item>
+        <item>displayed</item>
+        <item>here</item>
+    </string-array>
+
 </resources>

@@ -3,23 +3,10 @@
     android:layout_height="match_parent"
     android:background="@drawable/dp_10_round_cornered_white_background">
 
-    <ProgressBar
-        android:id="@+id/loader"
-        style="?android:attr/progressBarStyle"
-        android:layout_above="@id/widgetLoadingState"
-        android:layout_width="@dimen/dp_20"
-        android:layout_height="@dimen/dp_20"
-        android:layout_centerInParent="true" />
-
-    <TextView
-        android:id="@+id/widgetLoadingState"
+    <ListView
+        android:id="@+id/notes"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_centerInParent="true"
-        android:paddingVertical="@dimen/dp_8"
-        android:text="@string/notesWidgetDescription"
-        android:textColor="@color/purple_200"
-        android:textSize="@dimen/sp_12" />
+        android:layout_height="match_parent"
+        android:entries="@array/sampleNotes" />
 
 </RelativeLayout>

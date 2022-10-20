@@ -152,13 +152,19 @@ dependencies {
     kapt "androidx.room:room-compiler:2.4.3"
     implementation "androidx.navigation:navigation-compose:2.5.2"
 
+    //Gson
+    implementation 'com.google.code.gson:gson:2.8.9'
+
     //Dagger hilt
     implementation 'com.google.dagger:hilt-android:2.43.2'
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
     kapt 'com.google.dagger:hilt-android-compiler:2.43.2'
     kapt 'androidx.hilt:hilt-compiler:1.0.0'
 
-    // Lifecycles ktx
+    // Lifecycle application process ktx
+    //implementation("androidx.lifecycle:lifecycle-process:2.6.0-alpha02")
+
+    // Lifecycle runtime ktx
     //implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha02"
 
     // Orbital
