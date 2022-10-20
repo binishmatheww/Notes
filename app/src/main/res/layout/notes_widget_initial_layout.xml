@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dp_10_round_cornered_white_background">
+    android:background="@drawable/dp_5_round_cornered_white_background">
 
     <ListView
         android:id="@+id/notes"
