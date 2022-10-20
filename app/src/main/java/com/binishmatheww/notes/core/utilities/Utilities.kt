@@ -29,18 +29,26 @@ import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.math.absoluteValue
 
 fun log(lambda: () -> String) = log("Notes", lambda)
@@ -86,6 +94,50 @@ fun Lifecycle.observeAsSate(): State<Lifecycle.Event> {
         }
     }
     return state
+}
+
+// Copied from FlowExt.kt - package androidx.lifecycle.compose
+@ExperimentalLifecycleComposeApi
+@Composable
+fun <T> Flow<T>.collectAsStateWithLifecycleAndCallback(
+    initialValue: T,
+    lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
+    minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
+    context: CoroutineContext = EmptyCoroutineContext,
+    callback: suspend (T) -> Unit
+): State<T> = collectAsStateWithLifecycleAndCallback(
+    initialValue = initialValue,
+    lifecycle = lifecycleOwner.lifecycle,
+    minActiveState = minActiveState,
+    context = context,
+    callback = callback
+)
+
+// Copied from FlowExt.kt - package androidx.lifecycle.compose
+@ExperimentalLifecycleComposeApi
+@Composable
+fun <T> Flow<T>.collectAsStateWithLifecycleAndCallback(
+    initialValue: T,
+    lifecycle: Lifecycle,
+    minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
+    context: CoroutineContext = EmptyCoroutineContext,
+    callback: suspend (T) -> Unit
+): State<T> {
+    return produceState(initialValue, this, lifecycle, minActiveState, context) {
+        lifecycle.repeatOnLifecycle(minActiveState) {
+            if (context == EmptyCoroutineContext) {
+                this@collectAsStateWithLifecycleAndCallback.collect {
+                    this@produceState.value = it
+                    callback.invoke(it)
+                }
+            } else withContext(context) {
+                this@collectAsStateWithLifecycleAndCallback.collect {
+                    this@produceState.value = it
+                    callback.invoke(it)
+                }
+            }
+        }
+    }
 }
 
 //https://github.com/Ahmed-Sellami/List-Animations-In-Compose/blob/swipe-to-delete/app/src/main/java/com/example/listanimationsincompose/ui/SwipeToDelete.kt
