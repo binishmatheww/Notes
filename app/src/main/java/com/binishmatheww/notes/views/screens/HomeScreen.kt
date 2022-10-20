@@ -70,7 +70,7 @@ fun HomeScreen(
 
         val scope = rememberCoroutineScope()
 
-        val openAddNoteDialog = remember { mutableStateOf(false) }
+        var openAddNoteDialog by remember { mutableStateOf(false) }
 
         Column(
             modifier = Modifier
@@ -126,7 +126,7 @@ fun HomeScreen(
                                 .background(MaterialTheme.colorScheme.background)
                                 .align(Alignment.Center)
                                 .noRippleClickable {
-                                    openAddNoteDialog.value = true
+                                    openAddNoteDialog = true
                                 }, horizontalAlignment = Alignment.CenterHorizontally
                         ) {
 
@@ -171,7 +171,7 @@ fun HomeScreen(
                                 noteColorId = note.colorId,
                                 noteTitle = note.title,
                                 onNoteClick = {
-                                    openAddNoteDialog.value = false
+                                    openAddNoteDialog = false
                                     onNoteClick.invoke(it)
                                 },
                                 onNoteDelete = {
@@ -244,7 +244,7 @@ fun HomeScreen(
                             shape = MaterialTheme.shapes.large
                         )
                         .clickable(onClick = {
-                            openAddNoteDialog.value = true
+                            openAddNoteDialog = true
                         }), contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -261,17 +261,17 @@ fun HomeScreen(
 
         }
 
-        if (openAddNoteDialog.value) {
+        if (openAddNoteDialog) {
 
             AddNoteDialog(modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.background),
                 onDismiss = {
-                    openAddNoteDialog.value = false
+                    openAddNoteDialog = false
                 },
                 onSave = { title, description ->
 
-                    openAddNoteDialog.value = false
+                    openAddNoteDialog = false
 
                     val id = System.currentTimeMillis()
 
