@@ -3,7 +3,7 @@
     android:initialLayout="@layout/notes_widget_initial_layout"
     android:previewLayout="@layout/notes_widget_initial_layout"
     android:minWidth="150dp"
-    android:minHeight="200dp"
+    android:minHeight="50dp"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="0"
     android:widgetCategory="home_screen">
