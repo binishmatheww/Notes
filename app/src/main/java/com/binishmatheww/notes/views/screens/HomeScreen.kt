@@ -19,8 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -115,7 +117,7 @@ fun HomeScreen(
 
                             NotesWidget.notifyNotesWidget(
                                 context = context,
-                                notes = it,
+                                notes = it.take(10),
                             )
                         }
                     )
@@ -257,12 +259,12 @@ fun HomeScreen(
                         }), contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.Add,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        contentDescription = null,
                         modifier = Modifier
                             .padding(4.dp)
-                            .size(28.dp)
+                            .size(28.dp),
+                        imageVector = ImageVector.vectorResource(id = R.drawable.icon_add),
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        contentDescription = null,
                     )
                 }
 
