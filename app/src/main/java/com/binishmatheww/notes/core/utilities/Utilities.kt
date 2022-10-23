@@ -1,7 +1,15 @@
 package com.binishmatheww.notes.core.utilities
 
+import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Paint
+import android.graphics.drawable.PaintDrawable
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.RoundRectShape
+import android.os.Build
 import android.util.Log
+import androidx.annotation.ColorInt
+import androidx.annotation.FloatRange
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.calculateTargetValue
 import androidx.compose.animation.core.spring
@@ -24,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.util.VelocityTracker
@@ -33,11 +42,18 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.drawable.toBitmapOrNull
+import androidx.glance.*
+import androidx.glance.appwidget.cornerRadius
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -50,15 +66,17 @@ import java.util.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.math.absoluteValue
+import com.binishmatheww.notes.R
+
 
 fun log(lambda: () -> String) = log("Notes", lambda)
 
-fun log(tag: String = "Notes", lambda: () -> String) = Log.wtf( tag, lambda.invoke() )
+fun log(tag: String = "Notes", lambda: () -> String) = Log.wtf(tag, lambda.invoke())
 
 /**
  * Function to convert milliseconds to date in dd/MM/yyyy hh:mm:ss.SSS format.
  */
-fun Long.toDate() : String {
+fun Long.toDate(): String {
 
     return try {
         val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm aa")
@@ -175,7 +193,7 @@ fun Modifier.onSwipe(
 
                         velocityTracker.addPosition(change.uptimeMillis, change.position)
 
-                        if ( horizontalDragOffset > 50f ) change.consume()
+                        if (horizontalDragOffset > 50f) change.consume()
 
                     }
 
@@ -194,8 +212,7 @@ fun Modifier.onSwipe(
 
                     if (targetOffsetX.absoluteValue <= threshold) {
                         offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
-                    }
-                    else {
+                    } else {
 
                         offsetX.animateDecay(
                             when (velocity) {
@@ -212,17 +229,16 @@ fun Modifier.onSwipe(
                             decay
                         )
 
-                        if(velocity >= 0){
-                            if(!onSwipeRight.invoke()){
+                        if (velocity >= 0) {
+                            if (!onSwipeRight.invoke()) {
                                 offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
-                            }else{
+                            } else {
                                 offsetX.snapTo(0f)
                             }
-                        }
-                        else{
-                            if (!onSwipeLeft.invoke()){
+                        } else {
+                            if (!onSwipeLeft.invoke()) {
                                 offsetX.animateTo(targetValue = 0f, initialVelocity = velocity)
-                            }else{
+                            } else {
                                 offsetX.snapTo(0f)
                             }
                         }
@@ -239,9 +255,36 @@ fun Modifier.onSwipe(
 
 }
 
-fun LazyListState.isScrolledToTheEnd() = layoutInfo.visibleItemsInfo.lastOrNull()?.index == layoutInfo.totalItemsCount - 1
 
-fun LazyListState.isScrolledToTheTop() = layoutInfo.visibleItemsInfo.firstOrNull()?.index == 0
+fun GlanceModifier.cornerRadiusCompat(
+    backgroundColor: Color,
+    width: Int = 50,
+    height: Int = 50,
+    cornerRadius: Int = 2
+): GlanceModifier {
+
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+
+        this.background(backgroundColor).cornerRadius(cornerRadius.dp)
+
+    } else {
+
+        /*this.background(
+            BitmapImageProvider(
+                PaintDrawable(backgroundColor.toArgb()).apply {
+                    setCornerRadius(cornerRadius.toFloat())
+                }.toBitmap(
+                    width = width,
+                    height = height,
+                    config = Bitmap.Config.ARGB_8888
+                )
+            )
+        )*/
+        this.background(ImageProvider(R.drawable.dp_5_round_cornered_white_background))
+
+    }
+
+}
 
 @Composable
 fun ChainedSpring() {
@@ -277,7 +320,7 @@ private fun Ring(
     idx: Int,
     moved: Boolean,
     size: Dp,
-    strokeWidth : Float
+    strokeWidth: Float
 ) {
     val offset = remember { Animatable(-50f) }
 
