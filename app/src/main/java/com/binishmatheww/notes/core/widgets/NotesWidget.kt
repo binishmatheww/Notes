@@ -1,14 +1,17 @@
 package com.binishmatheww.notes.core.widgets
 
 import android.content.Context
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.glance.*
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
@@ -25,43 +28,33 @@ import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.binishmatheww.notes.R
+import com.binishmatheww.notes.core.themes.ColorPalette
 import com.binishmatheww.notes.core.themes.WidgetTheme
+import com.binishmatheww.notes.core.utilities.cornerRadiusCompat
+import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.views.LauncherActivity
 
 class NotesWidget : GlanceAppWidget() {
 
     companion object{
 
-        suspend fun notifyNotesWidget( context: Context, noteTitle : String ) {
+        const val KEY_NOTES = "notes"
+
+        suspend fun notifyNotesWidget( context: Context, notes : List<Note> ) {
+
             GlanceAppWidgetManager(context).getGlanceIds(NotesWidget::class.java).forEach { glanceId ->
                 updateAppWidgetState(
                     context = context,
                     definition = NotesWidgetStateDefinition,
                     glanceId = glanceId) { pref ->
                     pref.toMutablePreferences().apply {
-                        this[stringPreferencesKey("noteTitle")] = noteTitle
+                        this[stringSetPreferencesKey(KEY_NOTES)] = notes.map { it.toString() }.toSet()
                     }
                 }
                 NotesWidget().updateAll(context)
             }
-        }
 
-        private val notes = mutableListOf(
-            "Sample",
-            "data",
-            "added",
-            "to",
-            "demonstrate",
-            "how",
-            "this",
-            "widget",
-            "will",
-            "display",
-            "notes",
-            "added",
-            "by",
-            "you",
-        )
+        }
 
     }
 
@@ -73,20 +66,22 @@ class NotesWidget : GlanceAppWidget() {
 
         WidgetTheme.NotesTheme {
 
-            val context = LocalContext.current
+            val pref = currentState<Preferences>()
 
-            //val pref = currentState<Preferences>()
-
-            //val noteTitle = remember { pref[stringPreferencesKey("noteTitle")] ?: "" }
+            val notes = remember { pref[stringSetPreferencesKey(KEY_NOTES)]?.map { Note.fromString(it) } ?: emptyList() }
 
             Column(
                 modifier = GlanceModifier
                     .fillMaxSize()
+                    .padding(8.dp)
             ) {
 
                 LazyColumn(
                     modifier = GlanceModifier
-                        .padding(R.dimen.dp_10),
+                        .padding(10.dp)
+                        //.background(MaterialTheme.colorScheme.background)
+                        .background(ImageProvider(R.drawable.dp_5_round_cornered_white_background))
+                        .height(200.dp),
                     content = {
 
                         items(notes){ note ->
@@ -98,22 +93,26 @@ class NotesWidget : GlanceAppWidget() {
                     }
                 )
 
-                Row(
+                Spacer(
                     modifier = GlanceModifier
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.End
+                        .height(12.dp)
+                )
+
+                Box(
+                    modifier = GlanceModifier
+                        .size(50.dp)
+                        .background(ImageProvider(R.drawable.dp_5_round_cornered_white_background))
+                        .clickable(actionStartActivity(LauncherActivity::class.java)),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = context.getString(R.string.addNote),
+
+                    Image(
                         modifier = GlanceModifier
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(R.dimen.dp_8)
-                            .clickable(actionStartActivity(LauncherActivity::class.java)),
-                        style = TextStyle(
-                            color = ColorProvider(MaterialTheme.colorScheme.primary),
-                            fontSize = 12.sp,
-                        )
+                            .size(28.dp),
+                        provider = ImageProvider(R.drawable.icon_add),
+                        contentDescription = LocalContext.current.getString(R.string.addNote),
                     )
+
                 }
 
             }
@@ -124,27 +123,42 @@ class NotesWidget : GlanceAppWidget() {
 
     @Composable
     private fun NoteLayout(
-        note : String,
+        note : Note,
     ){
 
         Column(
             modifier = GlanceModifier
-                .fillMaxWidth()
-                .background(ImageProvider(R.drawable.dp_4_round_cornered_white_background))
-                .padding(
-                    bottom = 20.dp
-                )
-                .clickable(actionStartActivity(LauncherActivity::class.java))
         ) {
 
-            Text(
-                text = note,
-                modifier = GlanceModifier.fillMaxWidth(),
-                style = TextStyle(
-                    color = ColorProvider(MaterialTheme.colorScheme.primary),
-                    fontSize = 12.sp,
-                    textAlign = TextAlign.Center
+            Row(
+                modifier = GlanceModifier
+                    .fillMaxWidth()
+                    .cornerRadiusCompat(
+                        cornerRadius = 4,
+                        backgroundColor = ColorPalette.getColorByNumber(note.colorId).copy(alpha = 0.6f)
+                    )
+                    .height(50.dp),
+                horizontalAlignment = Alignment.Horizontal.CenterHorizontally,
+                verticalAlignment = Alignment.Vertical.CenterVertically
+            ) {
+
+                Text(
+                    text = note.title,
+                    modifier = GlanceModifier
+                        .fillMaxWidth(),
+                    style = TextStyle(
+                        color = ColorProvider(MaterialTheme.colorScheme.primary),
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Center
+                    ),
+                    maxLines = 3
                 )
+
+            }
+
+            Spacer(
+                modifier = GlanceModifier
+                    .height(12.dp)
             )
 
         }
