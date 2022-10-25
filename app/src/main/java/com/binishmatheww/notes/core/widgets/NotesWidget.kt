@@ -1,6 +1,7 @@
 package com.binishmatheww.notes.core.widgets
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
@@ -13,6 +14,8 @@ import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.glance.*
+import androidx.glance.action.ActionParameters
+import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
@@ -86,6 +89,14 @@ class NotesWidget : GlanceAppWidget() {
 
                         items(notes){ note ->
                             NoteLayout(
+                                modifier = GlanceModifier
+                                    .clickable(
+                                        onClick = actionStartActivity<LauncherActivity>(
+                                            parameters = actionParametersOf(
+                                                ActionParameters.Key<Long>("id") to note.id
+                                            )
+                                        )
+                                    ),
                                 note = note
                             )
                         }
@@ -123,11 +134,12 @@ class NotesWidget : GlanceAppWidget() {
 
     @Composable
     private fun NoteLayout(
+        modifier: GlanceModifier = GlanceModifier,
         note : Note,
     ){
 
         Column(
-            modifier = GlanceModifier
+            modifier = modifier
         ) {
 
             Row(
