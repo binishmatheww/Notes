@@ -2,16 +2,14 @@ package com.binishmatheww.notes.views.screens
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
@@ -85,6 +83,8 @@ fun NoteDetailsScreen(
 
                 var description by remember { mutableStateOf("") }
 
+                var colorId by remember { mutableStateOf(0) }
+
                 LaunchedEffect(
                     key1 = true,
                     block = {
@@ -99,6 +99,7 @@ fun NoteDetailsScreen(
                                 note?.let {
                                     title = it.title
                                     description = it.description
+                                    colorId = it.colorId
                                 }
                             }
 
@@ -107,7 +108,7 @@ fun NoteDetailsScreen(
                     }
                 )
 
-                val ( noteTitleConstraint, noteDescriptionConstraint, noteSaveButtonConstraint ) = createRefs()
+                val ( noteTitleConstraint, noteDescriptionConstraint, noteColorIdConstraint, noteSaveButtonConstraint ) = createRefs()
 
                 val alpha = remember { Animatable(0f) }
 
@@ -168,12 +169,47 @@ fun NoteDetailsScreen(
                     }
                 )
 
+                val horizontalScrollState = rememberScrollState()
+
+                Row(
+                    modifier = Modifier
+                        .constrainAs(noteColorIdConstraint) {
+                            top.linkTo(noteDescriptionConstraint.bottom, 32.dp)
+                            start.linkTo(parent.start, 16.dp)
+                            end.linkTo(parent.end, 16.dp)
+                            width = Dimension.fillToConstraints
+                        }
+                        .horizontalScroll(horizontalScrollState),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    repeat(8){
+
+                        Canvas(
+                            modifier = Modifier
+                                .size(if(colorId == it) 70.dp else 50.dp)
+                                .padding(
+                                    start = 5.dp,
+                                    end = 5.dp
+                                )
+                                .clickable {
+                                    colorId = it
+                                },
+                            onDraw = {
+                                drawCircle(color = ColorPalette.getColorByNumber(it))
+                            }
+                        )
+
+                    }
+
+                }
+
                 Button(
                     modifier = Modifier.constrainAs(noteSaveButtonConstraint) {
                         bottom.linkTo(parent.bottom, 16.dp)
                         end.linkTo(parent.end, 16.dp)
                     },
-                    enabled = title.isNotBlank() && (title != note?.title || description != note?.description),
+                    enabled = title.isNotBlank() && (title != note?.title || description != note?.description || colorId != note?.colorId),
                     onClick = {
 
                         viewModel.addNote(
@@ -181,7 +217,7 @@ fun NoteDetailsScreen(
                                 id = noteId,
                                 title = title,
                                 description = description,
-                                colorId = note?.colorId ?: 0,
+                                colorId = colorId,
                                 modifiedAt = System.currentTimeMillis()
                             )
                         )
