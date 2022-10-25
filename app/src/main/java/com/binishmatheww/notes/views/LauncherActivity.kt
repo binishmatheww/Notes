@@ -1,5 +1,6 @@
 package com.binishmatheww.notes.views
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +21,12 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class LauncherActivity : AppCompatActivity() {
 
+    private var noteId : Long? = null
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        noteId = intent?.extras?.getLong("id")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +35,8 @@ class LauncherActivity : AppCompatActivity() {
             delay(400)
             window.setBackgroundDrawableResource(android.R.color.transparent)
         }
+
+        noteId = intent?.extras?.getLong("id")
 
         setContent {
 
@@ -38,14 +47,36 @@ class LauncherActivity : AppCompatActivity() {
                 startDestination = Routes.welcomeScreen,
             ){
 
+                fun navigateToNoteIfExists(){
+
+                    if( noteId != null && noteId != 0L ){
+
+                        if(navController.currentDestination?.route == Routes.noteDetailsScreen.plus("/{id}")){
+                            navController.popBackStack()
+                        }
+
+                        navController.navigate(
+                            route = Routes.noteDetailsScreen.plus("/$noteId")
+                        )
+                        noteId = null
+
+                    }
+
+                }
+
                 composable(
                     route = Routes.welcomeScreen
                 ){
 
                     WelcomeScreen(
-                        onComplete = {
+                        onResume = {
+
                             navController.popBackStack()
+
                             navController.navigate(Routes.homeScreen)
+
+                            navigateToNoteIfExists()
+
                         }
                     )
 
@@ -56,8 +87,15 @@ class LauncherActivity : AppCompatActivity() {
                 ){
 
                     HomeScreen(
+                        onResume = {
+
+                            navigateToNoteIfExists()
+
+                        },
                         onNoteClick = {
-                            navController.navigate(Routes.noteDetailsScreen.plus("/$it"))
+                            navController.navigate(
+                                route = Routes.noteDetailsScreen.plus("/$it")
+                            )
                         }
                     )
 
@@ -74,6 +112,9 @@ class LauncherActivity : AppCompatActivity() {
 
                     NoteDetailsScreen(
                         noteId = backStackEntry.arguments?.getLong("id") ?: 0,
+                        onResume = {
+                            navigateToNoteIfExists()
+                        },
                         onNoteSaved = {
                             navController.popBackStack()
                         }
