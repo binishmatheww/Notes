@@ -1,14 +1,10 @@
 package com.binishmatheww.notes.core.widgets
 
 import android.content.Context
-import android.util.Log
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
@@ -33,7 +29,6 @@ import androidx.glance.unit.ColorProvider
 import com.binishmatheww.notes.R
 import com.binishmatheww.notes.core.themes.ColorPalette
 import com.binishmatheww.notes.core.themes.WidgetTheme
-import com.binishmatheww.notes.core.utilities.cornerRadiusCompat
 import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.views.LauncherActivity
 
@@ -82,8 +77,7 @@ class NotesWidget : GlanceAppWidget() {
                 LazyColumn(
                     modifier = GlanceModifier
                         .padding(10.dp)
-                        //.background(MaterialTheme.colorScheme.background)
-                        .background(ImageProvider(R.drawable.dp_5_round_cornered_white_background))
+                        .background(ImageProvider(R.drawable.note_widget_background))
                         .height(200.dp),
                     content = {
 
@@ -109,20 +103,59 @@ class NotesWidget : GlanceAppWidget() {
                         .height(12.dp)
                 )
 
-                Box(
+                Row(
                     modifier = GlanceModifier
-                        .size(50.dp)
-                        .background(ImageProvider(R.drawable.dp_5_round_cornered_white_background))
-                        .clickable(actionStartActivity(LauncherActivity::class.java)),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
                 ) {
 
-                    Image(
+                    Row(
                         modifier = GlanceModifier
-                            .size(28.dp),
-                        provider = ImageProvider(R.drawable.icon_add),
-                        contentDescription = LocalContext.current.getString(R.string.addNote),
-                    )
+                            .height(50.dp)
+                            .defaultWeight(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Text(
+                            modifier = GlanceModifier,
+                            text = LocalContext.current.getString(R.string.spacedAppName),
+                            style = TextStyle(
+                                color = ColorProvider(Color.White),
+                                fontWeight = androidx.glance.text.FontWeight.Normal,
+                                fontSize = 32.sp,
+                            )
+                        )
+
+                        Spacer(
+                            modifier = GlanceModifier
+                                .width(6.dp)
+                        )
+
+                        Image(
+                            modifier = GlanceModifier
+                                .size(25.dp),
+                            provider = ImageProvider(R.drawable.note),
+                            contentDescription = LocalContext.current.getString(R.string.addNote),
+                        )
+
+                    }
+
+                    Box(
+                        modifier = GlanceModifier
+                            .size(50.dp)
+                            .background(ImageProvider(R.drawable.note_widget_background))
+                            .clickable(actionStartActivity(LauncherActivity::class.java)),
+                        contentAlignment = Alignment.Center
+                    ) {
+
+                        Image(
+                            modifier = GlanceModifier
+                                .size(28.dp),
+                            provider = ImageProvider(R.drawable.note_add_icon),
+                            contentDescription = LocalContext.current.getString(R.string.addNote),
+                        )
+
+                    }
 
                 }
 
@@ -145,10 +178,7 @@ class NotesWidget : GlanceAppWidget() {
             Row(
                 modifier = GlanceModifier
                     .fillMaxWidth()
-                    .cornerRadiusCompat(
-                        cornerRadius = 4,
-                        backgroundColor = ColorPalette.getColorByNumber(note.colorId).copy(alpha = 0.6f)
-                    )
+                    .background(ImageProvider(R.drawable.note_item_background))
                     .height(50.dp),
                 horizontalAlignment = Alignment.Horizontal.CenterHorizontally,
                 verticalAlignment = Alignment.Vertical.CenterVertically
@@ -159,7 +189,7 @@ class NotesWidget : GlanceAppWidget() {
                     modifier = GlanceModifier
                         .fillMaxWidth(),
                     style = TextStyle(
-                        color = ColorProvider(MaterialTheme.colorScheme.primary),
+                        color = ColorProvider(Color.White.copy(alpha = 0.9f)),
                         fontSize = 18.sp,
                         textAlign = TextAlign.Center
                     ),
