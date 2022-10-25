@@ -76,8 +76,6 @@ fun HomeScreen(
 
         val context = LocalContext.current
 
-        val scope = rememberCoroutineScope()
-
         var openAddNoteDialog by remember { mutableStateOf(false) }
 
         Column(
@@ -268,7 +266,7 @@ fun HomeScreen(
                         modifier = Modifier
                             .padding(4.dp)
                             .size(28.dp),
-                        imageVector = ImageVector.vectorResource(id = R.drawable.icon_add),
+                        imageVector = ImageVector.vectorResource(id = R.drawable.note_add_icon),
                         tint = MaterialTheme.colorScheme.onPrimary,
                         contentDescription = null,
                     )
