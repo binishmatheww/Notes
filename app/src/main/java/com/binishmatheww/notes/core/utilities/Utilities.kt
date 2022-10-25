@@ -74,12 +74,12 @@ fun log(lambda: () -> String) = log("Notes", lambda)
 fun log(tag: String = "Notes", lambda: () -> String) = Log.wtf(tag, lambda.invoke())
 
 /**
- * Function to convert milliseconds to date in dd/MM/yyyy hh:mm:ss.SSS format.
+ * Function to convert milliseconds to date in dd/MM/yyyy hh:mm aa format.
  */
 fun Long.toDate(): String {
 
     return try {
-        val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm aa")
+        val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.getDefault())
 
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = this
@@ -112,6 +112,29 @@ fun Lifecycle.observeAsSate(): State<Lifecycle.Event> {
         }
     }
     return state
+}
+
+@Composable
+fun OnLifeCycleState(
+    key1 : Any? = true,
+    lifecycleState : Lifecycle.State,
+    onState : suspend () -> Unit
+){
+
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    LaunchedEffect(
+        key1 = key1
+    ){
+
+        lifecycle.repeatOnLifecycle(
+            state = lifecycleState
+        ) {
+           onState.invoke()
+        }
+
+    }
+
 }
 
 // Copied from FlowExt.kt - package androidx.lifecycle.compose
