@@ -10,8 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,11 +27,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.binishmatheww.notes.R
 import com.binishmatheww.notes.core.themes.AppTheme
 import com.binishmatheww.notes.core.themes.ColorPalette
+import com.binishmatheww.notes.core.utilities.OnLifeCycleState
 import com.binishmatheww.notes.core.utilities.collectAsStateWithLifecycleAndCallback
 import com.binishmatheww.notes.core.utilities.networkManagers.ConnectivityObserver
 import com.binishmatheww.notes.core.utilities.noRippleClickable
@@ -49,10 +49,16 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
+    onResume: () -> Unit,
     onNoteClick: (Long) -> Unit,
 ) {
 
     AppTheme.NotesTheme {
+
+        OnLifeCycleState(
+            lifecycleState = Lifecycle.State.RESUMED,
+            onState = { onResume.invoke() }
+        )
 
         val networkStatus by viewModel.networkConnectivityObserver.observe().collectAsStateWithLifecycle(
             initialValue = ConnectivityObserver.Status.UnSpecified

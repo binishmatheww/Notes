@@ -19,11 +19,13 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.binishmatheww.notes.R
 import com.binishmatheww.notes.core.themes.AppTheme
 import com.binishmatheww.notes.core.themes.ColorPalette
+import com.binishmatheww.notes.core.utilities.OnLifeCycleState
 import com.binishmatheww.notes.core.utilities.networkManagers.ConnectivityObserver
 import com.binishmatheww.notes.models.Note
 import com.binishmatheww.notes.viewModels.NoteDetailsViewModel
@@ -39,10 +41,16 @@ import kotlinx.coroutines.withContext
 fun NoteDetailsScreen(
     noteId : Long,
     viewModel : NoteDetailsViewModel = hiltViewModel(),
+    onResume : () -> Unit,
     onNoteSaved : () -> Unit
 ){
 
     AppTheme.NotesTheme {
+
+        OnLifeCycleState(
+            lifecycleState = Lifecycle.State.RESUMED,
+            onState = { onResume.invoke() }
+        )
 
         val networkStatus by viewModel.networkConnectivityObserver.observe().collectAsState(
             initial = ConnectivityObserver.Status.UnSpecified

@@ -15,15 +15,24 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
 import com.binishmatheww.notes.R
 import com.binishmatheww.notes.core.themes.AppTheme
+import com.binishmatheww.notes.core.utilities.OnLifeCycleState
 
 @Composable
-fun WelcomeScreen( onComplete : () -> Unit ) {
+fun WelcomeScreen(
+    onResume : () -> Unit
+) {
 
     AppTheme.NotesTheme {
 
         val size = remember { Animatable(1f) }
+
+        OnLifeCycleState(
+            lifecycleState = Lifecycle.State.RESUMED,
+            onState = { onResume.invoke() }
+        )
 
         LaunchedEffect(true){
             size.animateTo(
@@ -32,7 +41,7 @@ fun WelcomeScreen( onComplete : () -> Unit ) {
                     durationMillis = 2000
                 )
             )
-            onComplete.invoke()
+            onResume.invoke()
         }
 
         Column(
