@@ -1,15 +1,10 @@
 package com.binishmatheww.notes.core.utilities
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.drawable.PaintDrawable
-import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.shapes.RoundRectShape
 import android.os.Build
 import android.util.Log
-import androidx.annotation.ColorInt
-import androidx.annotation.FloatRange
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.calculateTargetValue
 import androidx.compose.animation.core.spring
@@ -22,7 +17,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -42,12 +36,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.ColorUtils
-import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.graphics.drawable.toBitmapOrNull
 import androidx.glance.*
 import androidx.glance.appwidget.cornerRadius
 import androidx.lifecycle.Lifecycle
@@ -279,20 +268,20 @@ fun Modifier.onSwipe(
 }
 
 
-fun GlanceModifier.cornerRadiusCompat(
+fun GlanceModifier.roundedCornerBackground(
     backgroundColor: Color,
     width: Int = 50,
     height: Int = 50,
     cornerRadius: Int = 2
 ): GlanceModifier {
 
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
 
         this.background(backgroundColor).cornerRadius(cornerRadius.dp)
 
     } else {
 
-        /*this.background(
+        this.background(
             BitmapImageProvider(
                 PaintDrawable(backgroundColor.toArgb()).apply {
                     setCornerRadius(cornerRadius.toFloat())
@@ -302,8 +291,7 @@ fun GlanceModifier.cornerRadiusCompat(
                     config = Bitmap.Config.ARGB_8888
                 )
             )
-        )*/
-        this.background(ImageProvider(R.drawable.dp_5_round_cornered_white_background))
+        )
 
     }
 
