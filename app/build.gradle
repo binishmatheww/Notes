@@ -70,7 +70,7 @@ android {
 
         variant.outputs.all { output ->
 
-            def project = "The notes"
+            def project = "Notes"
             def version = "v"+versionMajor+"."+versionMinor+"."+versionBuild
             //def formattedDate = new Date().format('YYYY_MM_dd_hh_mm_ss_aa')
             def apkName = "${project}_${version}.apk"
