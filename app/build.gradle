@@ -11,6 +11,8 @@ android {
 
     compileSdk 33
 
+    namespace 'com.binishmatheww.notes'
+
     flavorDimensions "versionCode"
 
     // 1 or more digits
@@ -119,42 +121,61 @@ android {
     buildFeatures {
         compose true
     }
-    namespace 'com.binishmatheww.notes'
 
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.9.0'
+    // Kotlin standard lib
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.7.20"
+
+    // Androidx core ktx
+    implementation 'androidx.core:core-ktx:1.9.0'
+
+    // Appcompat
     implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.6.1'
+
+    // Material
+    implementation 'com.google.android.material:material:1.7.0'
 
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
-    //ViewModel
+    // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
 
-    //Activity ktx
-    implementation "androidx.activity:activity-ktx:1.6.0"
+    // Activity ktx
+    implementation "androidx.activity:activity-ktx:1.6.1"
 
-    //Fragment ktx
-    implementation "androidx.fragment:fragment-ktx:1.5.3"
-
-    //Jetpack compose
+    // Compose ui
     implementation 'androidx.compose.ui:ui:1.2.1'
+
+    // Compose ui tooling
     implementation 'androidx.compose.ui:ui-tooling:1.2.1'
+
+    // Compose foundation
     implementation 'androidx.compose.foundation:foundation:1.2.1'
+
+    // Compose material
     implementation 'androidx.compose.material:material:1.2.1'
+
+    // Compose material3
     implementation "androidx.compose.material3:material3:1.0.0-rc01"
+
+    // Compose material3 window-size-class
     implementation "androidx.compose.material3:material3-window-size-class:1.0.0-rc01"
-    implementation 'androidx.compose.material:material-icons-core:1.2.1'
-    implementation 'androidx.compose.material:material-icons-extended:1.2.1'
-    implementation 'androidx.activity:activity-compose:1.6.0'
+
+    // Compose activity
+    implementation 'androidx.activity:activity-compose:1.6.1'
+
+    // Compose constraint layout
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+
+    // Compose lifecycle viewmodel
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
-    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha02"
+
+    // Compose lifecycle runtime
+    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha03"
 
     // Accompanist systemUiController
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.25.1"
@@ -189,16 +210,16 @@ dependencies {
     // Orbital
     //implementation "com.github.skydoves:orbital:0.2.2"
 
-    //Paging 3
+    // Paging 3
     //implementation "androidx.paging:paging-runtime:3.1.1"
     //implementation "androidx.paging:paging-compose:1.0.0-alpha14"
     //implementation "androidx.room:room-paging:2.4.2"
 
-    //Work manager
+    // Work manager
     //implementation "androidx.work:work-runtime-ktx:2.7.1"
     //implementation "androidx.work:work-multiprocess:2.7.1"
 
-    //Ktor client
+    // Ktor client
     //implementation 'io.ktor:ktor-client-android:1.5.0'
     //implementation 'io.ktor:ktor-client-serialization:1.5.0'
     //implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1'
