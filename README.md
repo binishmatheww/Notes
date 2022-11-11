@@ -1,5 +1,5 @@
 # Notes
-A simple note taking app developed using Jetpack Compose UI
+A simple note taking app developed using Jetpack Compose.
 <br />
 
 ## Technologies Used 🛠
